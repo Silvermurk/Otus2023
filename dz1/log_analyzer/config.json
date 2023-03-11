@@ -1,0 +1,6 @@
+{
+    "REPORT_SIZE": 80,
+    "REPORT_DIR": "./output",
+    "LOG_DIR": "./input",
+    "SOME_DATA": "SomeData"
+}
