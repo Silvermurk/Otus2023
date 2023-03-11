@@ -17,7 +17,7 @@ of urls that have maximum $request_time
 # Run example
 python -m log_analyzer.py --config=config.json
 
-Returns html file of type report-YYY-MM-DD with REPORT_SIZE lines of urls with 
+Returns html file of type report-YYY.MM.DD with REPORT_SIZE lines of urls with 
 maximum $request_time in REPORT_DIR if any logs were found or analyzed
 Will not analyze logs twice, if report with same date is present in REPORT_DIR
 ------------------------------------------------------------------------------

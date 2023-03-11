@@ -77,9 +77,12 @@ def main():
     except Exception as exception:
         logger.exception('Unknown error %s', exception)
 
-    filename = f'report-{datetime.datetime.now().year}.' \
-               f'{datetime.datetime.now().month:02d}.' \
-               f'{datetime.datetime.now().day:02d}'
+    latest_date = datetime.datetime.strptime(
+                   latest_logs[max(latest_logs)].split('.')[1][4:],
+                   '%Y%m%d').date()
+    filename = 'report-' + f'{latest_date.year}.' \
+                           f'{latest_date.month:02d}.' \
+                           f'{latest_date.day:02d}'
 
     create_and_copy_report(filename, config, first_k)
 
