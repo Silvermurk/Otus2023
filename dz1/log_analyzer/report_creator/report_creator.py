@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # pylint:disable=anomalous-backslash-in-string
-# pylint:disable=consider-using-with
+# pylint:disable=too-many-branches
 
 """
 Report creater module for log_analyzer
