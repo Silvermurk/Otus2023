@@ -13,6 +13,7 @@ import gzip
 import os
 import re
 import statistics
+from typing import TextIO
 
 from dz1.log_analyzer.log import logger
 
@@ -36,20 +37,13 @@ line_format = re.compile(
     '(?P<req_time>\d.\d{0,10})')
 
 
-def create_report(config: dict, file: str) -> list:
+def inner_create_report(config: dict, log_file: TextIO) -> dict:
     """
-    Method gets config and log file path as input and results a list
-    of requests with maximum time_max
+    Inner method to use with instead open
     :param config: Dictionary containing config data from main script
-    :param file: Path to log file to analyze
-    :return: list of files matching expression with max(time_max)
+    :param log_file: List of log file lines
+    :return: Dictionary of files matching expression with max(time_max)
     """
-    file_path = os.getcwd() + f'/{config["LOG_DIR"]}/{file}'
-    if file.endswith('.gz'):
-        log_file = gzip.open(file_path)
-    else:
-        log_file = open(file_path, encoding='utf-8')
-
     results = {}
     total_time = int()
     bad_reqs = int()
@@ -100,5 +94,23 @@ def create_report(config: dict, file: str) -> list:
         first_k[item]['time_med'] = \
             statistics.median(first_k[item]['median'])
         first_k[item].pop('median', None)
+    return first_k
+
+
+def create_report(config: dict, file: str) -> list:
+    """
+    Method gets config and log file path as input and results a list
+    of requests with maximum time_max
+    :param config: Dictionary containing config data from main script
+    :param file: Path to log file to analyze
+    :return: list of files matching expression with max(time_max)
+    """
+    file_path = os.getcwd() + f'/{config["LOG_DIR"]}/{file}'
+    if file.endswith('.gz'):
+        with open(gzip.open(file_path)) as log_file:
+            first_k = inner_create_report(config, log_file)
+    else:
+        with open(file_path, encoding='utf-8') as log_file:
+            first_k = inner_create_report(config, log_file)
 
     return list(first_k.values())

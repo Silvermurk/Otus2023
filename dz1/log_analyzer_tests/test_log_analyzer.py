@@ -25,7 +25,7 @@ def test_load_external_config():
         """
         def __init__(self, **kwargs):
             for name in kwargs.items():
-                setattr(self, name[0], kwargs[name[0]])
+                setattr(self, name[0], name[1])
 
         def __eq__(self, other):
             if not isinstance(other, Namespace):
