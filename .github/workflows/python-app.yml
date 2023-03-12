@@ -26,4 +26,4 @@ jobs:
         pip install pytest
     - name: Run pytest
       run: | 
-        py.test log_analyzer_tests/test_log_analyzer.py
+        py.test dz1/log_analyzer_tests/test_log_analyzer.py
