@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 # pylint:disable=duplicate-code
-# https://github.com/PyCQA/pylint/issues/214
 """
 Tests for log_analyzer
 """
@@ -26,7 +25,7 @@ def test_load_external_config():
         """
         def __init__(self, **kwargs):
             for name in kwargs.items():
-                setattr(self, name[0], kwargs[name])
+                setattr(self, name[0], kwargs[name[0]])
 
         def __eq__(self, other):
             if not isinstance(other, Namespace):

@@ -44,11 +44,7 @@ def create_report(config: dict, file: str) -> list:
     :param file: Path to log file to analyze
     :return: list of files matching expression with max(time_max)
     """
-    try:
-        file_path = os.getcwd() + f'/{config["LOG_DIR"]}/{file}'
-    except FileNotFoundError:
-        file_path = os.path.dirname(os.getcwd()) + \
-                    f'/{config["LOG_DIR"]}/{file}'
+    file_path = os.getcwd() + f'/{config["LOG_DIR"]}/{file}'
     if file.endswith('.gz'):
         log_file = gzip.open(file_path)
     else:
