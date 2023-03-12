@@ -43,7 +43,7 @@ def test_load_external_config():
         }
 
     expected = copy.copy(config)
-    with open(f'{os.getcwd()}/config.json',
+    with open(f'{os.path.dirname(os.getcwd())}/config.json',
               encoding='utf-8') as file:
         expected.update(json.load(file))
 
@@ -90,7 +90,8 @@ def test_report_creator():
         "REPORT_DIR": "./bad_output",
         "LOG_DIR": "./input"
         }
-    result = create_report(config, 'nginx-access-ui.log-20100101')
+    result = create_report(config, f'{os.path.dirname(os.getcwd())}/'
+                                   f'nginx-access-ui.log-20100101')
     expected = [{'url': '/api/v2/banner/25019354',
                  'count': 1,
                  'time_sum': 0.39,
