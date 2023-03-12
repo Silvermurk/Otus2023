@@ -42,7 +42,7 @@ def test_load_external_config():
         }
 
     expected = copy.copy(config)
-    with open(f'{os.path.dirname(os.getcwd())}/log_analyzer/config.json',
+    with open(f'{os.getcwd()}/log_analyzer/config.json',
               encoding='utf-8') as file:
         expected.update(json.load(file))
 
