@@ -96,5 +96,5 @@ def create_and_copy_report(filename: str,
         file_data = file.read()
     file_data = file_data.replace('$table_json', str(first_k))
     with open(f'{os.getcwd()}/{config["REPORT_DIR"]}/{filename}.html',
-              'w') as file:
+              'w', encoding='utf-8') as file:
         file.write(file_data)
