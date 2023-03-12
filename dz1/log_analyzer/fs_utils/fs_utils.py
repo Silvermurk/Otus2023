@@ -41,7 +41,7 @@ def check_for_logs(config: dict) -> dict or None:
         logger.exception('Exception on listing log dir: %s', exception)
         return None
 
-    log_files = dict()
+    log_files = {}
     for file in files:
         if not file.startswith('nginx-access-ui'):
             continue
@@ -66,7 +66,7 @@ def check_for_reports(config: dict) -> dict or None:
         logger.exception('Exception on listing log dir: %s', exception)
         return None
 
-    report_files = dict()
+    report_files = {}
     for file in files:
         if not file.startswith('report-'):
             continue

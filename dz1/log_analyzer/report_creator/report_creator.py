@@ -49,7 +49,7 @@ def create_report(config: dict, file: str) -> list:
     else:
         log_file = open(file_path, encoding='utf-8')
 
-    results = dict()
+    results = {}
     total_time = int()
     bad_reqs = int()
     for line in log_file:
@@ -62,7 +62,7 @@ def create_report(config: dict, file: str) -> list:
             req_uri = datadict['req_uri']
             req_time = float(datadict['req_time'])
             if req_uri not in results:
-                results[req_uri] = dict()
+                results[req_uri] = {}
                 results[req_uri]['url'] = req_uri
                 results[req_uri]['count'] = 1
                 results[req_uri]['time_sum'] = req_time
