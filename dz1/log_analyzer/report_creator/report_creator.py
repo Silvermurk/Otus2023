@@ -44,7 +44,11 @@ def create_report(config: dict, file: str) -> list:
     :param file: Path to log file to analyze
     :return: list of files matching expression with max(time_max)
     """
-    file_path = os.getcwd() + f'/{config["LOG_DIR"]}/{file}'
+    try:
+        file_path = os.getcwd() + f'/{config["LOG_DIR"]}/{file}'
+    except FileNotFoundError:
+        file_path = os.path.dirname(os.getcwd()) + \
+                    f'/{config["LOG_DIR"]}/{file}'
     if file.endswith('.gz'):
         log_file = gzip.open(file_path)
     else:
@@ -86,7 +90,7 @@ def create_report(config: dict, file: str) -> list:
                            reverse=True)
     if bad_reqs / len(result_tuples) * 100 > 50:
         logger.error('More than 50% of lines were not parsed')
-        raise Exception('More than 50% of lines were not parsed')
+        raise FileNotFoundError('More than 50% of lines were not parsed')
 
     if len(result_tuples) > config['REPORT_SIZE']:
         first_k = dict(result_tuples[:config['REPORT_SIZE']])

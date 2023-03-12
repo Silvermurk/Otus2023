@@ -72,7 +72,7 @@ def main():
     first_k = []
     try:
         first_k = create_report(config, latest_logs[max(latest_logs)])
-    except (Exception,) as exception:
+    except (FileNotFoundError,) as exception:
         logger.exception('Unknown error %s', exception)
 
     latest_date = datetime.datetime.strptime(

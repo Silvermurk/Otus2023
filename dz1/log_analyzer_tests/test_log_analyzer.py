@@ -90,8 +90,7 @@ def test_report_creator():
         "REPORT_DIR": "./bad_output",
         "LOG_DIR": "./input"
         }
-    result = create_report(config, f'{os.path.dirname(os.getcwd())}/'
-                                   f'nginx-access-ui.log-20100101')
+    result = create_report(config, f'nginx-access-ui.log-20100101')
     expected = [{'url': '/api/v2/banner/25019354',
                  'count': 1,
                  'time_sum': 0.39,
