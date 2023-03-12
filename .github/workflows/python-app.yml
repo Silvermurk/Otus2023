@@ -28,4 +28,4 @@ jobs:
       env:
         working-directory: ./dz1/log_analyzer_tests
       run: | 
-        py.test ./dz1/log_analyzer_teststest_log_analyzer.py
+        py.test ./dz1/log_analyzer_tests/test_log_analyzer.py
