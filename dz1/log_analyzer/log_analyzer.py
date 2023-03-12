@@ -72,7 +72,7 @@ def main():
         logger.info('Latest logs for %s are analyzed already', latest_reports)
         sys.exit('No new logs to analyze')
 
-    first_k = list()
+    first_k = []
     try:
         first_k = create_report(config, latest_logs[max(latest_logs)])
     except Exception as exception:
