@@ -12,7 +12,10 @@ import os
 from dz1.log_analyzer.fs_utils import (load_external_config,
                                        check_for_logs,
                                        check_for_reports)
+from dz1.log_analyzer.log import logger
 from dz1.log_analyzer.report_creator import create_report
+
+logger.disabled = True
 
 
 def test_load_external_config():
