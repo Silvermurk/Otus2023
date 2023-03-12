@@ -5,6 +5,7 @@ General logger
 """
 
 import logging
+import os
 import sys
 from logging.handlers import RotatingFileHandler
 
@@ -22,7 +23,7 @@ console_handler.setFormatter(formatter)
 logger.addHandler(console_handler)
 
 
-file_handler = RotatingFileHandler(filename='log/autotest.log',
+file_handler = RotatingFileHandler(filename=f'{os.getcwd()}/log/autotest.log',
                                    maxBytes=LOG_FILE_MAX_SIZE,
                                    backupCount=LOG_FILE_MAX_BACKUP_COUNT,
                                    encoding='utf-8',

@@ -46,7 +46,7 @@ def create_report(config: dict, file: str) -> list:
     """
     file_path = os.getcwd() + f'/{config["LOG_DIR"]}/{file}'
     if file.endswith('.gz'):
-        log_file = gzip.open(file_path, encoding='utf-8')
+        log_file = gzip.open(file_path)
     else:
         log_file = open(file_path, encoding='utf-8')
 
