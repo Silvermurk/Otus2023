@@ -2,4 +2,4 @@
 """
 General init file for report_creator
 """
-from report_creator import create_report
+from .report_creator import create_report

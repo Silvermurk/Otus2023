@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # pylint:disable=broad-except
+# https://github.com/PyCQA/pylint/issues/214
 
 # log_format ui_short '$remote_addr  $remote_user $http_x_real_ip
 #                     '[$time_local] "$request" '

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 # pylint:disable=anomalous-backslash-in-string
+
 """
 Report creater module for log_analyzer
 Gets log file on input and parses each line throu regular expression
@@ -44,9 +45,9 @@ def create_report(config: dict, file: str) -> list:
     """
     file_path = os.getcwd() + f'/{config["LOG_DIR"]}/{file}'
     if file.endswith('.gz'):
-        log_file = gzip.open(file_path)
+        log_file = gzip.open(file_path, encoding='utf-8')
     else:
-        log_file = open(file_path)
+        log_file = open(file_path, encoding='utf-8')
 
     results = dict()
     total_time = int()

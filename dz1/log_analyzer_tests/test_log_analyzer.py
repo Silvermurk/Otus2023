@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-
+# pylint:disable=duplicate-code
+# https://github.com/PyCQA/pylint/issues/214
 """
 Tests for log_analyzer
 """
