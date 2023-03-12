@@ -79,7 +79,7 @@ def create_report(config: dict, file: str) -> list:
         else:
             if '"0" 400' not in line:
                 bad_reqs += 1
-                logger.exception(f'Bad line %s', line)
+                logger.exception('Bad line %s', line)
     result_tuples = sorted(results.items(), key=lambda x: x[1]['time_sum'],
                            reverse=True)
     if bad_reqs / len(result_tuples) * 100 > 50:

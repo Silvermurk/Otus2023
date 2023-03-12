@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
 # pylint: disable=invalid-name
+"""
+General logger
+"""
 
 import logging
 import sys
 from logging.handlers import RotatingFileHandler
-
-"""
-General logger
-"""
 
 LOG_FILE_MAX_SIZE = 1024 * 1024 * 1024
 LOG_FILE_MAX_BACKUP_COUNT = 1
