@@ -1,8 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# pylint:disable=broad-except
-# https://github.com/PyCQA/pylint/issues/214
-
 # log_format ui_short '$remote_addr  $remote_user $http_x_real_ip
 #                     '[$time_local] "$request" '
 #                     '$status $body_bytes_sent "$http_referer" '
@@ -75,7 +72,7 @@ def main():
     first_k = []
     try:
         first_k = create_report(config, latest_logs[max(latest_logs)])
-    except Exception as exception:
+    except (Exception,) as exception:
         logger.exception('Unknown error %s', exception)
 
     latest_date = datetime.datetime.strptime(

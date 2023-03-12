@@ -37,7 +37,7 @@ def check_for_logs(config: dict) -> dict or None:
     """
     try:
         files = os.listdir(config['LOG_DIR'])
-    except Exception as exception:
+    except (Exception,) as exception:
         logger.exception('Exception on listing log dir: %s', exception)
         return None
 
@@ -62,7 +62,7 @@ def check_for_reports(config: dict) -> dict or None:
         """
     try:
         files = os.listdir(config['REPORT_DIR'])
-    except Exception as exception:
+    except (Exception,) as exception:
         logger.exception('Exception on listing log dir: %s', exception)
         return None
 
