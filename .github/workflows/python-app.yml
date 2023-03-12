@@ -26,6 +26,6 @@ jobs:
         pip install pytest
     - name: Run pytest
       env:
-        working-directory: .dz1/log_analyzer_tests
+        working-directory: ./dz1/log_analyzer_tests
       run: | 
-        py.test test_log_analyzer.py
+        py.test ./dz1/log_analyzer_teststest_log_analyzer.py
