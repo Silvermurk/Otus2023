@@ -25,8 +25,8 @@ def test_load_external_config():
         Argparser-analogue class to mock it`s iterable namespace
         """
         def __init__(self, **kwargs):
-            for name in kwargs:
-                setattr(self, name, kwargs[name])
+            for name in kwargs.items():
+                setattr(self, name[0], kwargs[name])
 
         def __eq__(self, other):
             if not isinstance(other, Namespace):
