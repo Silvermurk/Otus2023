@@ -1,4 +1,4 @@
-name: pytest
+name: Pytest
 
 on:
   push:
@@ -25,4 +25,4 @@ jobs:
         python -m pip install --upgrade pip
     - name: Run pytest
       run: | 
-        pytest
+        py.test log_analyzer_tests/test_log_analyzer.py
