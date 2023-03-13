@@ -42,8 +42,8 @@ def test_load_external_config():
         }
 
     expected = copy.copy(config)
-    print(os.listdir(os.getcwd()))
-    with open(f'{os.getcwd()}/log_analyzer/config.json',
+    print(f'!!!{os.listdir(os.getcwd())}!!!')
+    with open(f'{os.getcwd()}dz1//log_analyzer/config.json',
               encoding='utf-8') as file:
         expected.update(json.load(file))
 
