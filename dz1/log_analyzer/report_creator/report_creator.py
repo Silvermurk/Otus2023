@@ -106,7 +106,7 @@ def create_report(config: dict, file: str) -> list:
     :return: list of files matching expression with max(time_max)
     """
     if 'Otus2023/Otus2023' in os.getcwd():
-        file_path = f'{os.getcwd()}/dz1/' \
+        file_path = f'{os.getcwd()}/dz1/log_analyzer' \
                     f'{config["LOG_DIR"].replace("./", "")}/{file}'
     else:
         file_path = f'{os.getcwd()}' + f'/{config["LOG_DIR"]}/{file}'
