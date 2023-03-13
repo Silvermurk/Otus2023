@@ -105,7 +105,10 @@ def create_report(config: dict, file: str) -> list:
     :param file: Path to log file to analyze
     :return: list of files matching expression with max(time_max)
     """
-    file_path = os.getcwd() + f'/{config["LOG_DIR"]}/{file}'
+    if 'Otus2023/Otus2023' in os.getcwd():
+        file_path = f'{os.getcwd()}/dz1/{config["LOG_DIR"]}/{file}'
+    else:
+        file_path = f'{os.getcwd()}' + f'/{config["LOG_DIR"]}/{file}'
     if file.endswith('.gz'):
         with open(gzip.open(file_path), encoding='bytes') as log_file:
             first_k = inner_create_report(config, log_file)
