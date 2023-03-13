@@ -42,7 +42,6 @@ def test_load_external_config():
         }
 
     expected = copy.copy(config)
-    print(f'!!! {os.listdir(f"{os.getcwd()}/dz1")} !!!')
     if 'Otus2023/Otus2023' in os.getcwd():
         path = f'{os.getcwd()}/dz1/log_analyzer/config.json'
     else:
