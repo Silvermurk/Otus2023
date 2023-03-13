@@ -23,8 +23,11 @@ def load_external_config(args: Namespace, config: dict) -> dict:
     :return: Merged config data from config and external file, if it is present
     """
     if 'config' in args:
-        with open(os.getcwd() + f'/{args.config}',
-                  encoding='utf-8') as file:
+        if 'Otus2023/Otus2023' in os.getcwd():
+            path = f'{os.getcwd()}/dz1/' + f'{args.config}'
+        else:
+            path = os.getcwd() + f'/{args.config}'
+        with open(path, encoding='utf-8') as file:
             config.update(json.load(file))
     return config
 
