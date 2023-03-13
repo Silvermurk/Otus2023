@@ -24,7 +24,7 @@ def load_external_config(args: Namespace, config: dict) -> dict:
     """
     if 'config' in args:
         if 'Otus2023/Otus2023' in os.getcwd():
-            path = f'{os.getcwd()}/dz1/log_analyzer' + f'{args.config}'
+            path = f'{os.getcwd()}/dz1/log_analyzer/' + f'{args.config}'
         else:
             path = os.getcwd() + f'/{args.config}'
         with open(path, encoding='utf-8') as file:
