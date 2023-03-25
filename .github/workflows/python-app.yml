@@ -1,10 +1,10 @@
-name: Pytest
+name: Pytest DZ1
 
 on:
   push:
-    branches: [ main ]
+    branches: [ dz1 ]
   pull_request:
-    branches: [ main ]
+    branches: [ dz1 ]
 
 permissions:
   contents: read
