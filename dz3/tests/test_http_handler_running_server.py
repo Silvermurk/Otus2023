@@ -14,20 +14,18 @@ import json
 import pytest
 import requests
 
-import dz3.api_handler.api as api
+from dz3.api_handler.api import ADMIN_LOGIN, ADMIN_SALT, SALT
 
 
 # Requires API started at http://127.0.0.1:8080
-
-
 def gen_good_auth(request_body):
-    if request_body['login'] == api.ADMIN_LOGIN:
+    if request_body['login'] == ADMIN_LOGIN:
         code_for_hash = (datetime.datetime.now()
-                         .strftime("%Y%m%d%H") + api.ADMIN_SALT) \
+                         .strftime("%Y%m%d%H") + ADMIN_SALT) \
             .encode('utf-8')
         return hashlib.sha512(code_for_hash).hexdigest()
     code_for_hash = (request_body['account']
-                     + request_body['login'] + api.SALT).encode('utf-8')
+                     + request_body['login'] + SALT).encode('utf-8')
     return hashlib.sha512(code_for_hash).hexdigest()
 
 
