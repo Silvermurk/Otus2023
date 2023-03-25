@@ -43,7 +43,9 @@ def test_http_handler_valid_request(request_body, request_header):
     request_body = json.loads(request_body)
     request_body['token'] = gen_good_auth(request_body)
     request_body = json.dumps(request_body)
-    response = requests.post('http://127.0.0.1:8080/method/', data=request_body)
+    response = requests.post('http://127.0.0.1:8080/method/',
+                             data=request_body,
+                             timeout=60)
     assert response.status_code == 200
 
 
@@ -61,7 +63,9 @@ def test_http_handler_wrong_path(request_body, request_header):
     request_body = json.loads(request_body)
     request_body['token'] = gen_good_auth(request_body)
     request_body = json.dumps(request_body)
-    response = requests.post('http://127.0.0.1:8080/met/', data=request_body)
+    response = requests.post('http://127.0.0.1:8080/met/',
+                             data=request_body,
+                             timeout=60)
     assert response.status_code == 404
 
 
@@ -76,7 +80,9 @@ def test_http_handler_wrong_path(request_body, request_header):
                            {'Content-Type': 'application/json', })],
                          ids=['account_field_with_excessive_quotes'])
 def test_http_handler_bad_request(request_body, request_header):
-    response = requests.post('http://127.0.0.1:8080/method/', data=request_body)
+    response = requests.post('http://127.0.0.1:8080/method/',
+                             data=request_body,
+                             timeout=60)
     assert response.status_code == 400
 
 
@@ -91,5 +97,7 @@ def test_http_handler_bad_request(request_body, request_header):
                            {'Content-Type': 'application/json', })],
                          ids=['acount instead of account'])
 def test_http_handler_internal_error(request_body, request_header):
-    response = requests.post('http://127.0.0.1:8080/method/', data=request_body)
+    response = requests.post('http://127.0.0.1:8080/method/',
+                             data=request_body,
+                             timeout=60)
     assert response.status_code == 500
