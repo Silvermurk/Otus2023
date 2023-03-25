@@ -26,8 +26,6 @@ jobs:
         pip install pytest
         nohup python ./dz3/api_handler/api.py
     - name: Run pytest
-      env:
-        working-directory: ..
       run: | 
         python -m pytest ./dz3/tests/
         
