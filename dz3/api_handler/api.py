@@ -15,8 +15,8 @@ import logging
 import uuid
 from http.server import HTTPServer, BaseHTTPRequestHandler
 
-import dz3.api_handler.store as store_api
 from dz3.api_handler.scoring import get_score, get_interests
+from dz3.api_handler.store import Store
 from dz3.fields.fields import (DeclarativeFieldsMetaclass,
                                EMPTY_VALUES, ClientIDsField, DateField,
                                CharField, EmailField, BirthDayField,
@@ -261,7 +261,7 @@ class MainHTTPHandler(BaseHTTPRequestHandler):
     router = {
         "method": method_handler
         }
-    store = store_api.Store()
+    store = Store()
 
     @staticmethod
     def get_request_id(headers):
