@@ -27,5 +27,7 @@ jobs:
         pip install requests
     - name: Run pytest
       run: | 
+        python dz3/api_handler/api.py
+        sleep 2
         py.test ./dz3/tests/test_field_types.py
         py.test ./dz3/tests/test_http_handler_running_server.py        
