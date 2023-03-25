@@ -270,7 +270,7 @@ class MainHTTPHandler(BaseHTTPRequestHandler):
         """
         return headers.get('HTTP_X_REQUEST_ID', uuid.uuid4().hex)
 
-    # Server method, can to nothing to fix snake_case
+    # Server method, can do nothing to fix snake_case
     def do_POST(self):
         """
         Method does POST request
