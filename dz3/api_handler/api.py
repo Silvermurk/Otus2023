@@ -15,7 +15,7 @@ import logging
 import uuid
 from http.server import HTTPServer, BaseHTTPRequestHandler
 
-import dz3.api_handler.store as store_api
+import Otus2023.dz3.api_handler.store as store_api
 from dz3.api_handler.scoring import get_score, get_interests
 from dz3.fields.fields import (DeclarativeFieldsMetaclass,
                                EMPTY_VALUES, ClientIDsField, DateField,
