@@ -1,4 +1,6 @@
 # pylint:disable=missing-function-docstring
+# pylint:disable=consider-using-from-import
+
 """
 Module for field tests
 """

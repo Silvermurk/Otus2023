@@ -1,6 +1,8 @@
 # pylint:disable=missing-function-docstring
 # pylint:disable=unused-argument
 # pylint:disable=implicit-str-concat
+# pylint:disable=consider-using-from-import
+
 """
 Module for API tests
 """

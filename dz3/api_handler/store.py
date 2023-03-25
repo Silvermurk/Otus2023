@@ -99,7 +99,7 @@ class Store:
         query_text = 'SELECT client_id, GROUP_CONCAT(' \
                      'interest ORDER BY interest SEPARATOR " " ) ' \
                      'AS interests FROM interests GROUP BY ' \
-                     'client_id HAVING client_id IN (%s)' % format_strings
+                     f'client_id HAVING client_id IN (f{format_strings})'
 
         query_result = self.query(conn_class=self.conn_store, query=query_text)
         return json.dumps(query_result)

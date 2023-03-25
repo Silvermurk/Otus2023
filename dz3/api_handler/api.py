@@ -64,7 +64,7 @@ class BasicClassRequest(metaclass=DeclarativeFieldsMetaclass):
         """
         non_empty_fields = []
         for (cls_fld_name, cls_fld_value) in self.all_fields:
-            if cls_fld_name in kwargs.keys():
+            if cls_fld_name in kwargs:
                 cls_fld_value.label = kwargs[cls_fld_name]
                 if kwargs[cls_fld_name] not in list(EMPTY_VALUES):
                     non_empty_fields.append(cls_fld_name)

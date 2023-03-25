@@ -142,13 +142,13 @@ class DeclarativeFieldsMetaclass(type):
     Metaclass to collect and check all basic fields
     """
 
-    def __new__(cls, name, bases, attrs):
+    def __new__(mcs, name, bases, attrs):
         # Collect fields from current class.
         all_fields = []
         for key, value in list(attrs.items()):
             if isinstance(value, Field):
                 all_fields.append((key, value))
-        new_class = super(DeclarativeFieldsMetaclass, cls).__new__(
-            cls, name, bases, attrs)
+        new_class = super(DeclarativeFieldsMetaclass, mcs).__new__(
+            mcs, name, bases, attrs)
         new_class.all_fields = all_fields
         return new_class
