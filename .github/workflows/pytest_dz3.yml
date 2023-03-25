@@ -24,7 +24,7 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install pytest
-        nohup python -m  ./dz3/api_handler/api.py
+        nohup python ./dz3/api_handler/api.py
     - name: Run pytest
       env:
         working-directory: ./dz3
