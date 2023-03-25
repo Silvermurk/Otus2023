@@ -29,5 +29,5 @@ jobs:
       env:
         working-directory: ..
       run: | 
-        py.test ./dz3/tests
+        python -m pytest ./dz3/tests/
         
