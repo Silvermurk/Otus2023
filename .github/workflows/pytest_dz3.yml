@@ -27,7 +27,7 @@ jobs:
         nohup python ./dz3/api_handler/api.py
     - name: Run pytest
       env:
-        working-directory: ./dz3/tests
+        working-directory: ..
       run: | 
         py.test ./dz3/tests
         
