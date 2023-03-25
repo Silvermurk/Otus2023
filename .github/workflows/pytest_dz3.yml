@@ -22,7 +22,7 @@ jobs:
         python-version: "3.8"
     - name: Install dependencies
       run: |
-        ls
+        ls dz3
         python -m pip install --upgrade pip
         pip install pytest
         nohup python ./dz3/api_handler/api.py
