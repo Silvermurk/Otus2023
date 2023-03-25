@@ -6,7 +6,7 @@ Module for field tests
 """
 
 import pytest
-import dz3.api_handler.api as api
+import Otus2023.dz3.api_handler.api as api
 
 
 # CHAR FIELDS

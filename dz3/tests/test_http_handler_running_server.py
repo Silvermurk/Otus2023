@@ -14,7 +14,7 @@ import json
 import pytest
 import requests
 
-import dz3.api_handler.api as api
+import Otus2023.dz3.api_handler.api as api
 
 
 # Requires API started at http://127.0.0.1:8080
