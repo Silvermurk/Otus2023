@@ -9,20 +9,64 @@ import logging
 import json
 import time
 from contextlib import closing
+from sqlite3 import OperationalError
+
+import psycopg2
+import sql
 
 
-def get_store_connection():
+def get_store_connection(db_type: str):
     """
     Gets sqlite connection to store.db
     """
-    return sqlite3.connect('store.db')
+    if db_type == 'sqlite':
+        return sqlite3.connect('store.db')
+    elif db_type == 'debug':
+        return
+    elif db_type == 'sql':
+        try:
+            connection = None
+            retry_max = 3
+            retry_count = 0
+            while not connection:
+                connection = sql.SQL(psycopg2.connect(host='localhost',
+                                                      user='user',
+                                                      password='password',
+                                                      database='db_store'))
+                retry_count += 1
+                if retry_count > retry_max:
+                    logging.error('Store DB %s is unreachable', db_type)
+        except psycopg2.OperationalError:
+            logging.error('Connection to %s failed critically', db_type)
+    else:
+        logging.error('Invalid database type %s', db_type)
 
 
-def get_cache_connection():
+def get_cache_connection(db_type: str):
     """
     Gets sqlite connection to cache.db
     """
-    return sqlite3.connect('cache.db')
+    if db_type == 'sqlite':
+        return sqlite3.connect('cache.db')
+    elif db_type == 'debug':
+        return
+    elif db_type == 'sql':
+        try:
+            connection = None
+            retry_max = 3
+            retry_count = 0
+            while not connection:
+                connection = sql.SQL(psycopg2.connect(host='localhost',
+                                        user='user',
+                                        password='password',
+                                        database='db_cache'))
+                retry_count += 1
+                if retry_count > retry_max:
+                    logging.error('Cache DB %s is unreachable', db_type)
+        except psycopg2.OperationalError:
+            logging.error('Connection to %s failed critically', db_type)
+    else:
+        logging.error('Invalid database type %s', db_type)
 
 
 class Store:
@@ -30,12 +74,13 @@ class Store:
     Main storage class for all DBs
     """
 
-    def __init__(self):
+    def __init__(self, db_type: str = 'sqlite'):
         """
         initialize both connections beforehand
         """
-        self.conn_store = get_store_connection()
-        self.conn_cache = get_cache_connection()
+        self.db_type = db_type
+        self.conn_store = get_store_connection(db_type)
+        self.conn_cache = get_cache_connection(db_type)
 
     def create_store_tables(self, table_name, fields):
         """
@@ -82,7 +127,8 @@ class Store:
         """
         Main query class for all SQL-based stuff
         """
-        self.check_or_create_tables()
+        if self.db_type == 'sqlite':
+            self.check_or_create_tables()
         try:
             with closing(conn_class.cursor()) as cursor:
                 cursor.execute(query, params)
@@ -93,7 +139,7 @@ class Store:
 
     def get(self, cids):
         """
-        Gets interests from DB if any there
+        Gets interests from DB if any
         """
         format_strings = ','.join(['%s'] * len(cids))
         query_text = 'SELECT client_id, GROUP_CONCAT(' \
@@ -101,7 +147,8 @@ class Store:
                      'AS interests FROM interests GROUP BY ' \
                      f'client_id HAVING client_id IN (f{format_strings})'
 
-        query_result = self.query(conn_class=self.conn_store, query=query_text)
+        query_result = self.query(conn_class=self.conn_store,
+                                  query=query_text)
         return json.dumps(query_result)
 
     @staticmethod
@@ -121,14 +168,13 @@ class Store:
         """
         query_text = 'SELECT score, timeout ' \
                      'FROM cache_score WHERE key_score= ?'
+        result = {}
         try:
             result = self.query(conn_class=self.conn_cache,
                                 query=query_text,
                                 params=[key])
         except Exception as exception:
-            raise ConnectionError(
-                f"Cannot access to cache database: {exception}",
-                ) from exception
+            logging.warning(f"Cannot access to cache database: %s", exception)
         if len(result) != 0:
             if int(result[0][2]) < time.time():
                 query_text = 'DELETE FROM cache_score WHERE key_score= ? '

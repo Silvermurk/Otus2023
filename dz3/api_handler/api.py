@@ -124,7 +124,7 @@ class ClientsInterestsRequest(BasicClassRequest):
 
     def get_result(self, ctx, store, **request):
         """
-        Handles errors during interest retrivial
+        Handles errors during interest retrieval
         """
         if self.create_error_dict():
             return self.error_dict, INVALID_REQUEST
@@ -261,7 +261,7 @@ class MainHTTPHandler(BaseHTTPRequestHandler):
     router = {
         "method": method_handler
         }
-    store = Store()
+    store = Store('sql')
 
     @staticmethod
     def get_request_id(headers):
@@ -325,12 +325,12 @@ if __name__ == "__main__":
         epilog='Some help text')
     parser.add_argument('-c', '--port', default=8080)
     parser.add_argument('-l', '--log', default='common.log')
+    parser.add_argument('-db', '--database', default='sql')
     log_name = None if not parser.parse_args().log else parser.parse_args().log
     logging.basicConfig(filename=parser.parse_args().log,
                         level=logging.INFO,
                         format='[%(asctime)s] %(levelname).1s %(message)s',
                         datefmt='%Y.%m.%d %H:%M:%S')
-
     server = HTTPServer(("localhost", parser.parse_args().port),
                         MainHTTPHandler)
     logging.info("Starting server at %s", parser.parse_args().port)
