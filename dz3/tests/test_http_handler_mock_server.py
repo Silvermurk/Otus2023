@@ -31,6 +31,7 @@ def gen_good_auth(request_body):
 class MockedHttpHandler(MainHTTPHandler):
     # pylint:disable=super-init-not-called
     # pylint:disable=arguments-differ
+    # pylint:disable=attribute-defined-outside-init
     """
     Mocked http handler for simulating different scenarios
     Not calling super - because it is a mock scenario
@@ -51,8 +52,8 @@ class MockedHttpHandler(MainHTTPHandler):
     def end_headers(self):
         pass
 
-    def send_request(self, req, path="method/", req_id=42):
-        self.path = path
+    def send_request(self, req, req_path="method/", req_id=42):
+        self.path = req_path
         jrequest = json.dumps(req)
         self.rfile.write(jrequest.encode('utf-8'))
         self.rfile.seek(0)
@@ -61,6 +62,10 @@ class MockedHttpHandler(MainHTTPHandler):
 
 
 class TestResponseRequest:
+    # pylint:disable=attribute-defined-outside-init
+    """
+    Test class for emulates scoring api
+    """
     @pytest.fixture(autouse=True)
     def setup(self):
         self.handler = MockedHttpHandler()
@@ -96,6 +101,7 @@ class TestResponseRequest:
                                              "gender": 1}}],
                              ids=['valid_request-not_valid_path'])
     def test_http_handler_invalid_path(self, request_body):
+        # pylint:disable=unexpected-keyword-arg
         request_body['token'] = gen_good_auth(request_body)
         self.handler.send_request(request_body, path='/invalid')
         self.handler.do_POST()
