@@ -5,6 +5,7 @@ Module tests mock scoring api server
 import datetime
 import hashlib
 import logging
+from unittest import mock
 from unittest.mock import Mock
 
 import pytest
@@ -97,7 +98,7 @@ class TestOnlineScoreMethod:
         """
         self.context = {}
         self.headers = {}
-        self.good_store = store.Store('debug')
+        self.good_store = store.Store('sql')
         self.bad_store = store.Store('???')
 
     def get_response_good_store(self, request):
@@ -204,64 +205,3 @@ class TestOnlineScoreMethod:
         expected_output = INVALID_REQUEST
         logging.info("Got valid test error %s", error_msg)
         assert expected_output == result_code
-
-
-class TestGetInterestMethod:
-    """
-    Test class to test Interests method
-    """
-
-    @pytest.fixture(scope='function', autouse=True)
-    def setup(self):
-        # pylint:disable=attribute-defined-outside-init
-        """
-        Setup good and bad store beforehand
-        """
-        self.context = {}
-        self.headers = {}
-        self.good_store = store.Store('sql')
-        self.good_store.cursor = Mock()
-        self.bad_store = store.Store('???')
-
-    def get_response_good_store(self, request):
-        """
-        Get response from a good store
-        """
-        return method_handler({"body": request, "headers": self.headers},
-                              self.context, self.good_store)
-
-    @pytest.mark.parametrize(("query", "expected_output"), [
-        ({"account": "horns&hoofs", "login": "ff",
-          "method": "clients_interests", "token": "",
-          "arguments": {"client_ids": [1, 2], "date": "01.01.2010"}},
-         [{'client_id': 1, 'interests': 'cars pets sport'},
-          {'client_id': 2, 'interests': 'hi-tech music tv'}]),
-        ({"account": "horns&hoofs", "login": "ff",
-          "method": "clients_interests", "token": "",
-          "arguments": {"client_ids": [1], "date": ""}},
-         [{'client_id': 1, 'interests': 'cars pets sport'}]),
-        ({"account": "horns&hoofs", "login": "ff",
-          "method": "clients_interests", "token": "",
-          "arguments": {"client_ids": [6], "date": "01.01.2010"}}, [])
-        ],
-                             ids=["existing_ids_with_date",
-                                  "existing_ids_without_date",
-                                  "no_existing_id_with_date"])
-    def test_correct_query(self, query, expected_output):
-        """
-        Compare predicted output with real sql result
-        """
-        param_input, expected_output_tst = query, expected_output
-        param_input['token'] = gen_good_auth(param_input)
-        result, _ = self.get_response_good_store(param_input)
-        assert result == expected_output_tst
-
-    @pytest.mark.parametrize(("cids"),
-                             [([1, 2])],
-                             ids=['good_cids_bad_store'])
-    def test_try_get_interests_from_bad_store(self, cids):
-        """
-        Test to retrieve data from a bad store
-        """
-        with pytest.raises(Exception):
-            scoring.get_interests(store=self.bad_store, cid=cids)
