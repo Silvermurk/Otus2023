@@ -2,6 +2,9 @@
 # pylint:disable=unused-argument
 # pylint:disable=implicit-str-concat
 # pylint:disable=consider-using-from-import
+"""
+Module tests Scoring api with mocked server
+"""
 import json
 import io
 import hashlib
@@ -12,6 +15,9 @@ from dz3.api_handler.api import ADMIN_LOGIN, ADMIN_SALT, SALT, MainHTTPHandler
 
 
 def gen_good_auth(request_body):
+    """
+    Generates good auth token
+    """
     if request_body['login'] == ADMIN_LOGIN:
         code_for_hash = (datetime.datetime.now()
                          .strftime("%Y%m%d%H") + ADMIN_SALT) \
@@ -23,6 +29,12 @@ def gen_good_auth(request_body):
 
 
 class MockedHttpHandler(MainHTTPHandler):
+    # pylint:disable=super-init-not-called
+    # pylint:disable=arguments-differ
+    """
+    Mocked http handler for simulating different scenarios
+    Not calling super - because it is a mock scenario
+    """
 
     def __init__(self):
         self.rfile = io.BytesIO()
@@ -33,15 +45,15 @@ class MockedHttpHandler(MainHTTPHandler):
     def send_response(self, code):
         self.responses['code'] = code
 
-    def send_header(self, h, value):
+    def send_header(self, keyword, value):
         self.responses['headers']['h'] = value
 
     def end_headers(self):
         pass
 
-    def send_request(self, r, path="method/", req_id=42):
+    def send_request(self, req, path="method/", req_id=42):
         self.path = path
-        jrequest = json.dumps(r)
+        jrequest = json.dumps(req)
         self.rfile.write(jrequest.encode('utf-8'))
         self.rfile.seek(0)
         self.headers["Content-Length"] = len(jrequest)
