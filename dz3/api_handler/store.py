@@ -21,7 +21,7 @@ def get_store_connection(db_type: str):
     if db_type == 'sqlite':
         return sqlite3.connect('store.db')
     if db_type == 'debug':
-        return
+        return None
     if db_type == 'sql':
         try:
             connection = None
@@ -38,10 +38,10 @@ def get_store_connection(db_type: str):
             return connection
         except psycopg2.OperationalError:
             logging.error('Connection to %s failed critically', db_type)
-            return
+            return None
     else:
         logging.error('Invalid database type %s', db_type)
-        return
+        return None
 
 
 def get_cache_connection(db_type: str):
@@ -51,7 +51,7 @@ def get_cache_connection(db_type: str):
     if db_type == 'sqlite':
         return sqlite3.connect('cache.db')
     if db_type == 'debug':
-        return
+        return None
     if db_type == 'sql':
         try:
             connection = None
@@ -59,19 +59,19 @@ def get_cache_connection(db_type: str):
             retry_count = 0
             while not connection:
                 connection = sql.SQL(psycopg2.connect(host='localhost',
-                                        user='user',
-                                        password='password',
-                                        database='db_cache'))
+                                                      user='user',
+                                                      password='password',
+                                                      database='db_cache'))
                 retry_count += 1
                 if retry_count > retry_max:
                     logging.error('Cache DB %s is unreachable', db_type)
             return connection
         except psycopg2.OperationalError:
             logging.error('Connection to %s failed critically', db_type)
-            return
+            return None
     else:
         logging.error('Invalid database type %s', db_type)
-        return
+        return None
 
 
 class Store:
