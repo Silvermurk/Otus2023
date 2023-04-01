@@ -104,7 +104,7 @@ class TestResponseRequest:
     def test_http_handler_invalid_path(self, request_body):
         # pylint:disable=unexpected-keyword-arg
         request_body['token'] = gen_good_auth(request_body)
-        self.handler.send_request(request_body, path='/invalid')
+        self.handler.send_request(request_body, req_path='/invalid')
         self.handler.do_POST()
         response = json.loads(self.handler.wfile.getvalue().decode())
         assert isinstance(response, dict)
