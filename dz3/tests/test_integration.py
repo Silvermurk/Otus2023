@@ -30,6 +30,7 @@ class TestResponseRequest:
     """
     Test class for mocking api
     """
+
     @pytest.fixture(autouse=True)
     def setup(self):
         # pylint:disable=attribute-defined-outside-init
@@ -86,6 +87,7 @@ class TestOnlineScoreMethod:
     """
     Tests for online score method
     """
+
     @pytest.fixture(scope='function', autouse=True)
     def setup(self):
         # pylint:disable=attribute-defined-outside-init
@@ -119,11 +121,10 @@ class TestOnlineScoreMethod:
                   }}, 4.5),
         ({"account": "hf", "login": "admin", "method":
             "online_score", "token": "???", "arguments":
-              {
-                  "phone": "79859859857", "email": "shitmail@me.da",
-                  "first_name": "Vasya", "last_name": "",
-                  "birthday": "01.01.1980", "gender": 1
-                  }}, 42),
+              {"phone": "79859859857", "email": "shitmail@me.da",
+               "first_name": "Vasya", "last_name": "",
+               "birthday": "01.01.1980", "gender": 1
+               }}, 42),
         ],
                              ids=["user-all_fields",
                                   "user_no_last_name",
@@ -235,6 +236,7 @@ class TestGetInterestMethod:
     """
     Test class to test Interests method
     """
+
     @pytest.fixture(scope='function', autouse=True)
     def setup(self):
         # pylint:disable=attribute-defined-outside-init
