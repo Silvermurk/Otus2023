@@ -9,7 +9,6 @@ import logging
 import json
 import time
 from contextlib import closing
-from sqlite3 import OperationalError
 
 import psycopg2
 import sql
@@ -21,9 +20,9 @@ def get_store_connection(db_type: str):
     """
     if db_type == 'sqlite':
         return sqlite3.connect('store.db')
-    elif db_type == 'debug':
+    if db_type == 'debug':
         return
-    elif db_type == 'sql':
+    if db_type == 'sql':
         try:
             connection = None
             retry_max = 3
@@ -36,10 +35,13 @@ def get_store_connection(db_type: str):
                 retry_count += 1
                 if retry_count > retry_max:
                     logging.error('Store DB %s is unreachable', db_type)
+            return connection
         except psycopg2.OperationalError:
             logging.error('Connection to %s failed critically', db_type)
+            return
     else:
         logging.error('Invalid database type %s', db_type)
+        return
 
 
 def get_cache_connection(db_type: str):
@@ -48,9 +50,9 @@ def get_cache_connection(db_type: str):
     """
     if db_type == 'sqlite':
         return sqlite3.connect('cache.db')
-    elif db_type == 'debug':
+    if db_type == 'debug':
         return
-    elif db_type == 'sql':
+    if db_type == 'sql':
         try:
             connection = None
             retry_max = 3
@@ -63,10 +65,13 @@ def get_cache_connection(db_type: str):
                 retry_count += 1
                 if retry_count > retry_max:
                     logging.error('Cache DB %s is unreachable', db_type)
+            return connection
         except psycopg2.OperationalError:
             logging.error('Connection to %s failed critically', db_type)
+            return
     else:
         logging.error('Invalid database type %s', db_type)
+        return
 
 
 class Store:
@@ -174,7 +179,7 @@ class Store:
                                 query=query_text,
                                 params=[key])
         except Exception as exception:
-            logging.warning(f"Cannot access to cache database: %s", exception)
+            logging.warning("Cannot access to cache database: %s", exception)
         if len(result) != 0:
             if int(result[0][2]) < time.time():
                 query_text = 'DELETE FROM cache_score WHERE key_score= ? '
