@@ -5,8 +5,6 @@ Module tests mock scoring api server
 import datetime
 import hashlib
 import logging
-from unittest import mock
-from unittest.mock import Mock
 
 import pytest
 
