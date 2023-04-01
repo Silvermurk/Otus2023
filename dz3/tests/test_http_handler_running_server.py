@@ -2,6 +2,7 @@
 # pylint:disable=unused-argument
 # pylint:disable=implicit-str-concat
 # pylint:disable=consider-using-from-import
+# pylint:disable=duplicate-code
 
 """
 Module for API tests
