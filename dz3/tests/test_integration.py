@@ -1,5 +1,10 @@
+"""
+Module tests mock scoring api server
+"""
+
 import datetime
 import hashlib
+import logging
 
 import pytest
 
@@ -9,24 +14,36 @@ from dz3.api_handler.api import (ADMIN_LOGIN, ADMIN_SALT, SALT, FORBIDDEN,
 
 
 def gen_good_auth(request_body):
+    """
+    Generates good auth token
+    """
     if request_body['login'] == ADMIN_LOGIN:
         code_for_hash = (datetime.datetime.now()
                          .strftime("%Y%m%d%H") + ADMIN_SALT).encode('utf-8')
         return hashlib.sha512(code_for_hash).hexdigest()
-    else:
-        code_for_hash = (request_body['account']
-                         + request_body['login'] + SALT).encode('utf-8')
-        return hashlib.sha512(code_for_hash).hexdigest()
+    code_for_hash = (request_body['account']
+                     + request_body['login'] + SALT).encode('utf-8')
+    return hashlib.sha512(code_for_hash).hexdigest()
 
 
 class TestResponseRequest:
+    """
+    Test class for mocking api
+    """
     @pytest.fixture(autouse=True)
     def setup(self):
+        # pylint:disable=attribute-defined-outside-init
+        """
+        Replace store with debug store for tests
+        """
         self.context = {}
         self.headers = {}
         self.store = store.Store('debug')
 
     def get_response(self, request):
+        """
+        Get do_post response
+        """
         return method_handler({"body": request, "headers": self.headers},
                               self.context,
                               self.store)
@@ -40,6 +57,9 @@ class TestResponseRequest:
          "method": "online_score", "token": "", "arguments": {}},
         ], ids=["no-token-user", "fake-token-user", "no-token-admin"])
     def test_bad_auth(self, bad_auth_request):
+        """
+        Generates bad auth token
+        """
         param_input, expected_output = bad_auth_request, FORBIDDEN
         _, result_code = self.get_response(param_input)
         assert result_code == expected_output
@@ -51,6 +71,9 @@ class TestResponseRequest:
          "method": "bad_online_score", "token": "", "arguments": {}},
         ], ids=["empty_arguments", "invalid method"])
     def test_invalid_request(self, invalid_request):
+        """
+        Test for invalid requests
+        """
         param_input = invalid_request
         param_input['token'] = gen_good_auth(param_input)
         error_msg, result_code = self.get_response(param_input)
@@ -60,14 +83,24 @@ class TestResponseRequest:
 
 
 class TestOnlineScoreMethod:
+    """
+    Tests for online score method
+    """
     @pytest.fixture(scope='function', autouse=True)
     def setup(self):
+        # pylint:disable=attribute-defined-outside-init
+        """
+        Replacing stores with good and bad ones
+        """
         self.context = {}
         self.headers = {}
         self.good_store = store.Store('sql')
         self.bad_store = store.Store('???')
 
     def get_response_good_store(self, request):
+        """
+        Get response from a good store class
+        """
         return method_handler({"body": request, "headers": self.headers},
                               self.context, self.good_store)
 
@@ -99,10 +132,10 @@ class TestOnlineScoreMethod:
         """
         Theoretically we can check everything, but... Too lazy for example
         """
-        param_input, expected_output = query, expected_output
+        param_input, expected_output_tst = query, expected_output
         param_input['token'] = gen_good_auth(param_input)
         result, _ = self.get_response_good_store(param_input)
-        assert float(result['score']) == float(expected_output)
+        assert float(result['score']) == float(expected_output_tst)
 
     @pytest.mark.parametrize(("query", "field_to_remove"), [
         ({"account": "hf", "login": "test",
@@ -118,11 +151,11 @@ class TestOnlineScoreMethod:
         But assert it should not change - because data was cached.
         """
 
-        params_initial, field_to_remove = query, field_to_remove
+        params_initial, field_to_remove_tst = query, field_to_remove
         params_initial['token'] = gen_good_auth(params_initial)
         result_initial, _ = self.get_response_good_store(params_initial)
         params_new = params_initial
-        params_new[field_to_remove] = ""
+        params_new[field_to_remove_tst] = ""
         result_new, _ = self.get_response_good_store(params_new)
         assert float(result_initial['score']) == float(result_new['score'])
 
@@ -134,10 +167,15 @@ class TestOnlineScoreMethod:
               "birthday": "01.01.1980", "gender": 1}}],
                              ids=["user-all_fields_disable_store"])
     def test_check_online_score_restore_connection(self, query):
+        # pylint:disable=unused-variable
+        """
+        Test with bad connection turning into valid one
+        """
         params_initial = query
         params_initial['token'] = gen_good_auth(params_initial)
         if self.good_store.conn_cache.conn:
             self.good_store.conn_cache.conn.close()
+        # Empty variable used for test purposes
         result_new = scoring.get_score(
             store=self.good_store,
             phone=params_initial['arguments'].get('phone', None),
@@ -146,7 +184,6 @@ class TestOnlineScoreMethod:
             gender=params_initial['arguments'].get('gender', None),
             first_name=params_initial['arguments'].get('first_name', None),
             last_name=params_initial['arguments'].get('last_name', None))
-        aa = 1
         assert self.good_store.conn_cache.conn is not None
 
     @pytest.mark.parametrize("query", [
@@ -157,6 +194,9 @@ class TestOnlineScoreMethod:
               "birthday": "01.01.1980", "gender": 1}}],
                              ids=["user-all_fields_disable_store"])
     def test_online_score__works_when_store_is_unavailable(self, query):
+        """
+        Test with unavailable store
+        """
         params_initial = query
         params_initial['token'] = gen_good_auth(params_initial)
         result_new = scoring.get_score(
@@ -187,18 +227,29 @@ class TestOnlineScoreMethod:
         param_input['token'] = gen_good_auth(param_input)
         error_msg, result_code = self.get_response_good_store(param_input)
         expected_output = INVALID_REQUEST
+        logging.info("Got valid test error %s", error_msg)
         assert expected_output == result_code
 
 
 class TestGetInterestMethod:
+    """
+    Test class to test Interests method
+    """
     @pytest.fixture(scope='function', autouse=True)
     def setup(self):
+        # pylint:disable=attribute-defined-outside-init
+        """
+        Setup good and bad store beforehand
+        """
         self.context = {}
         self.headers = {}
         self.good_store = store.Store('sql')
         self.bad_store = store.Store('???')
 
     def get_response_good_store(self, request):
+        """
+        Get response from a good store
+        """
         return method_handler({"body": request, "headers": self.headers},
                               self.context, self.good_store)
 
@@ -223,10 +274,10 @@ class TestGetInterestMethod:
         """
         Compare predicted output with real sql result
         """
-        param_input, expected_output = query, expected_output
+        param_input, expected_output_tst = query, expected_output
         param_input['token'] = gen_good_auth(param_input)
         result, _ = self.get_response_good_store(param_input)
-        assert result == expected_output
+        assert result == expected_output_tst
 
     @pytest.mark.parametrize(("cids"),
                              [([1, 2])],
