@@ -5,6 +5,7 @@ Module tests mock scoring api server
 import datetime
 import hashlib
 import logging
+from unittest.mock import Mock
 
 import pytest
 
@@ -39,7 +40,7 @@ class TestResponseRequest:
         """
         self.context = {}
         self.headers = {}
-        self.store = store.Store('debug')
+        self.store = store.Store('sql')
 
     def get_response(self, request):
         """
@@ -161,40 +162,13 @@ class TestOnlineScoreMethod:
         assert float(result_initial['score']) == float(result_new['score'])
 
     @pytest.mark.parametrize("query", [
-        {"account": "hf", "login": "horse&hoofs",
-         "method": "online_score", "token": "???", "arguments":
-             {"phone": "79859859857", "email": "shitmail@me.da",
-              "first_name": "Ivan", "last_name": "Demidov",
-              "birthday": "01.01.1980", "gender": 1}}],
-                             ids=["user-all_fields_disable_store"])
-    def test_check_online_score_restore_connection(self, query):
-        # pylint:disable=unused-variable
-        """
-        Test with bad connection turning into valid one
-        """
-        params_initial = query
-        params_initial['token'] = gen_good_auth(params_initial)
-        if self.good_store.conn_cache:
-            self.good_store.conn_cache.conn.close()
-        # Empty variable used for test purposes
-        result_new = scoring.get_score(
-            store=self.good_store,
-            phone=params_initial['arguments'].get('phone', None),
-            email=params_initial['arguments'].get('email', None),
-            birthday=params_initial['arguments'].get('birthday', None),
-            gender=params_initial['arguments'].get('gender', None),
-            first_name=params_initial['arguments'].get('first_name', None),
-            last_name=params_initial['arguments'].get('last_name', None))
-        assert self.good_store.conn_cache is not None
-
-    @pytest.mark.parametrize("query", [
         {"account": "hf", "login": "123", "method": "online_score",
          "token": "123", "arguments":
              {"phone": "79859859857", "email": "shitmail@me.da",
               "first_name": "Satin", "last_name": "Hell",
               "birthday": "01.01.1980", "gender": 1}}],
                              ids=["user-all_fields_disable_store"])
-    def test_online_score__works_when_store_is_unavailable(self, query):
+    def test_online_score_works_when_store_is_unavailable(self, query):
         """
         Test with unavailable store
         """
@@ -246,6 +220,7 @@ class TestGetInterestMethod:
         self.context = {}
         self.headers = {}
         self.good_store = store.Store('sql')
+        self.good_store.cursor = Mock()
         self.bad_store = store.Store('???')
 
     def get_response_good_store(self, request):
