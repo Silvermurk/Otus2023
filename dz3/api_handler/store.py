@@ -51,7 +51,7 @@ def get_cache_connection(db_type: str):
     if db_type == 'sqlite':
         return sqlite3.connect('cache.db')
     if db_type == 'debug':
-        return None
+        return {"Good_connection": 1}
     if db_type == 'sql':
         try:
             connection = None

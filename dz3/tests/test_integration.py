@@ -185,7 +185,7 @@ class TestOnlineScoreMethod:
             gender=params_initial['arguments'].get('gender', None),
             first_name=params_initial['arguments'].get('first_name', None),
             last_name=params_initial['arguments'].get('last_name', None))
-        assert self.good_store.conn_cache.conn is not None
+        assert self.good_store.conn_cache is not None
 
     @pytest.mark.parametrize("query", [
         {"account": "hf", "login": "123", "method": "online_score",
