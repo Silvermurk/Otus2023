@@ -150,9 +150,12 @@ class TestOnlineScoreMethod:
         assert self.good_store.conn_cache.conn is not None
 
     @pytest.mark.parametrize("query", [
-        {"account": "hf", "login": "123", "method": "online_score", "token": "123", "arguments":
-            {"phone": "71234567890", "email": "a@b.ru", "first_name": "Stan", "last_name": "Stupnikov",
-             "birthday": "01.01.1991", "gender": 1}}], ids=["user-all_fields_disable_store"])
+        {"account": "hf", "login": "123", "method": "online_score",
+         "token": "123", "arguments":
+             {"phone": "79859859857", "email": "shitmail@me.da",
+              "first_name": "Satin", "last_name": "Hell",
+              "birthday": "01.01.1980", "gender": 1}}],
+                             ids=["user-all_fields_disable_store"])
     def test_online_score__works_when_store_is_unavailable(self, query):
         params_initial = query
         params_initial['token'] = gen_good_auth(params_initial)
@@ -175,12 +178,11 @@ class TestOnlineScoreMethod:
               "birthday": "01.01.1991", "gender": ""}},
         ], ids=["missed_email_last_name_gender"])
     def test_missed_required_arguments(self, bad_request):
-        '''
-        at the beginnig we calculate score and think that it should be in cache. Then remove the field that should
-        reduce score but expect that score won't change because it will be retrieved from cache
-        You should NOT change first name, last name or birthday (only email, phone and gender are available)
-        '''
-
+        """
+        At the start we calculate score and assume it is in cache.
+        Then remove field that should reduce overall score.
+        But assert it should not change - because data was cached.
+        """
         param_input = bad_request
         param_input['token'] = gen_good_auth(param_input)
         error_msg, result_code = self.get_response_good_store(param_input)
@@ -197,12 +199,13 @@ class TestGetInterestMethod:
         self.bad_store = store.Store('???')
 
     def get_response_good_store(self, request):
-        return method_handler({"body": request, "headers": self.headers}, self.context, self.good_store)
+        return method_handler({"body": request, "headers": self.headers},
+                              self.context, self.good_store)
 
     @pytest.mark.parametrize(("query", "expected_output"), [
         ({"account": "horns&hoofs", "login": "ff",
           "method": "clients_interests", "token": "",
-          "arguments": {"client_ids": [1, 2], "date": "20.07.2017"}},
+          "arguments": {"client_ids": [1, 2], "date": "01.01.2010"}},
          [{'client_id': 1, 'interests': 'cars pets sport'},
           {'client_id': 2, 'interests': 'hi-tech music tv'}]),
         ({"account": "horns&hoofs", "login": "ff",
@@ -211,24 +214,26 @@ class TestGetInterestMethod:
          [{'client_id': 1, 'interests': 'cars pets sport'}]),
         ({"account": "horns&hoofs", "login": "ff",
           "method": "clients_interests", "token": "",
-          "arguments": {"client_ids": [6], "date": "20.07.2017"}}, [])
+          "arguments": {"client_ids": [6], "date": "01.01.2010"}}, [])
         ],
                              ids=["existing_ids_with_date",
                                   "existing_ids_without_date",
                                   "no_existing_id_with_date"])
     def test_correct_query(self, query, expected_output):
-        '''
-        compare calculated output with the real rows in SQL db
-        '''
+        """
+        Compare predicted output with real sql result
+        """
         param_input, expected_output = query, expected_output
         param_input['token'] = gen_good_auth(param_input)
         result, _ = self.get_response_good_store(param_input)
         assert result == expected_output
 
-    @pytest.mark.parametrize(("cids"), [([1, 2])], ids=['good_cids_bad_store'])
+    @pytest.mark.parametrize(("cids"),
+                             [([1, 2])],
+                             ids=['good_cids_bad_store'])
     def test_try_get_interests_from_bad_store(self, cids):
-        '''
-        Try to retrieve the data from non-existent store
-        '''
+        """
+        Test to retrieve data from a bad store
+        """
         with pytest.raises(Exception):
             scoring.get_interests(store=self.bad_store, cid=cids)
