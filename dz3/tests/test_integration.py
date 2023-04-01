@@ -97,7 +97,7 @@ class TestOnlineScoreMethod:
         """
         self.context = {}
         self.headers = {}
-        self.good_store = store.Store('sql')
+        self.good_store = store.Store('debug')
         self.bad_store = store.Store('???')
 
     def get_response_good_store(self, request):
