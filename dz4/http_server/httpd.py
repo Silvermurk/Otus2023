@@ -1,3 +1,7 @@
+"""
+Httpd server class
+"""
+
 import datetime
 import logging
 import socket
@@ -31,6 +35,9 @@ logging.basicConfig(
 
 
 class HTTPException(Exception):
+    """
+    Custom expression for server
+    """
     pass
 
 

@@ -19,7 +19,7 @@ python3 -m dz4.tests
 
 ## **To run HTTP-server**
 ```
-python3.8 -m httpserver --root /path/to/document/root --port 8080 --workers 10
+python3.8 -m httpserver --root /path/to/document/root --port 8080 --workers 4
 ```
 
 ## **ApacheBench (ab) test for 100 workers**

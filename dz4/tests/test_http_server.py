@@ -8,7 +8,7 @@ from http.client import HTTPConnection
 
 import pytest
 
-from dz4.HttpServer import httpd
+from dz4.http_server import httpd
 
 
 def find_free_port():

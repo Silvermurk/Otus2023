@@ -13,7 +13,7 @@ import sys
 
 from pathlib import Path
 
-from dz4.HttpServer import httpd
+from dz4.http_server import httpd
 
 
 parser = argparse.ArgumentParser(
