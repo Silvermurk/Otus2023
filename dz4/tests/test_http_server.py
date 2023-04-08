@@ -56,7 +56,7 @@ class TestHttpServer:
         self.server.start()
         self.conn = HTTPConnection(self.host, self.port, timeout=10)
 
-    def teardown(self):
+    def teardown_method(self):
         """
         TearDown class for tests
         """
