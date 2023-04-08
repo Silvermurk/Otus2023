@@ -1,4 +1,11 @@
 # -*- coding: utf-8 -*-
+# pylint:disable=too-many-locals
+# pylint:disable=too-many-public-methods
+
+"""
+Test method for Httpd
+"""
+
 import logging
 import pathlib
 import re
@@ -12,6 +19,9 @@ from dz4.http_server import httpd
 
 
 def find_free_port():
+    """
+    Finds free port for a server
+    """
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as _socket:
         _socket.bind(("", 0))
         _socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -19,12 +29,18 @@ def find_free_port():
 
 
 class TestHttpServer:
+    """
+    Test class for http server
+    """
     host = 'localhost'
     document_root = PATH = pathlib.Path(__file__).parent
     n_workers = 4
 
     @pytest.fixture(autouse=True)
     def setup(self):
+        """
+        Setup class for tests
+        """
         # pylint:disable=attribute-defined-outside-init
         logger = logging.getLogger()
         logger.disabled = True
@@ -41,6 +57,9 @@ class TestHttpServer:
         self.conn = HTTPConnection(self.host, self.port, timeout=10)
 
     def teardown(self):
+        """
+        TearDown class for tests
+        """
         self.conn.close()
         self.server.terminate()
 
@@ -223,7 +242,7 @@ class TestHttpServer:
         headers = head.split("\r\n")
         assert len(headers) > 0, "no headers found"
         status_line = headers.pop(0)
-        (proto, code, status) = status_line.split(" ")
+        (_, code, _) = status_line.split(" ")
         header = {}
         for _key, _value in enumerate(headers):
             (name, value) = re.split(r"\s*:\s*", _value, 1)
