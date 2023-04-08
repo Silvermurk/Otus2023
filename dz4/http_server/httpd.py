@@ -174,7 +174,7 @@ def handle_client_connection(conn: socket.socket,
             raw_bytes = receive(conn)
             request = parse_request(raw_bytes)
             response = handle_request(request, document_root)
-            logging.info(f'%s: %s %s',
+            logging.info('%s: %s %s',
                          address,
                          request.method,
                          request.target)
