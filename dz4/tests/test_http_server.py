@@ -3,7 +3,7 @@
 # pylint:disable=too-many-public-methods
 
 """
-Test method for Httpd
+Test method for Httpd server
 """
 
 import logging
