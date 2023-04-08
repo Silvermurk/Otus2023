@@ -58,4 +58,4 @@ class HTTPResponse(NamedTuple):
             body=body,
             content_type='text/plain',
             content_length=len(body)
-        )
+            )

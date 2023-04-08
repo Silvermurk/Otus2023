@@ -8,12 +8,12 @@ Allowed types:
 .html | .js | .css |.jpeg | .jpg | .png | .gif | .swf
 """
 import argparse
+import logging
 import sys
 
 from pathlib import Path
 
-from . import httpd
-from .httpd import logging
+from dz4.HttpServer import httpd
 
 
 parser = argparse.ArgumentParser(
@@ -24,7 +24,7 @@ parser.add_argument('-p', '--port', default=8080)
 parser.add_argument('-l', '--log', default='common.log')
 parser.add_argument('-w', '--workers', default=4)
 parser.add_argument('-r', '--root', default='./')
-parser.add_argument('-r', '--address', default='localhost')
+parser.add_argument('-a', '--address', default='localhost')
 
 
 if parser.parse_args().workers < 0:

@@ -7,7 +7,7 @@ import urllib.parse
 from pathlib import Path
 from typing import Tuple
 
-from .types import HTTPMethod, HTTPRequest, HTTPResponse, HTTPStatus
+from .http_types import HTTPMethod, HTTPRequest, HTTPResponse, HTTPStatus
 
 ALLOWED_CONTENT_TYPES = {
     ".html": "text/html",
