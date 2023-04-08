@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+# pylint:disable=broad-except
 """
 Httpd server class
 """
@@ -38,7 +40,6 @@ class HTTPException(Exception):
     """
     Custom expression for server
     """
-    pass
 
 
 def receive(conn: socket.socket) -> bytearray:
@@ -64,7 +65,7 @@ def receive(conn: socket.socket) -> bytearray:
             received += chunk
 
     except socket.timeout:
-        raise HTTPException(HTTPStatus.REQUEST_TIMEOUT)
+        raise HTTPException(HTTPStatus.REQUEST_TIMEOUT) from socket.timeout
 
     return received
 
@@ -77,14 +78,14 @@ def parse_request(received: bytearray) -> HTTPRequest:
     request_line = str(raw_request_line, "iso-8859-1")
 
     try:
-        raw_method, raw_target, version = request_line.split()
+        raw_method, raw_target, _ = request_line.split()
     except ValueError:
-        raise HTTPException(HTTPStatus.BAD_REQUEST)
+        raise HTTPException(HTTPStatus.BAD_REQUEST) from ValueError
 
     try:
         method = HTTPMethod[raw_method]
     except KeyError:
-        raise HTTPException(HTTPStatus.METHOD_NOT_ALLOWED)
+        raise HTTPException(HTTPStatus.METHOD_NOT_ALLOWED) from KeyError
 
     return HTTPRequest(method=method, target=urllib.parse.unquote(raw_target))
 
@@ -138,9 +139,9 @@ def send_response(conn: socket.socket,
         f"Date: {now}",
         f"Content-Type: {response.content_type}",
         f"Content-Length: {response.content_length}",
-        f"Server: Fancy-Python-HTTP-Server",
-        f"Connection: close",
-        f"",
+        "Server: Fancy-Python-HTTP-Server",
+        "Connection: close",
+        "",
         )
 
     try:
@@ -166,29 +167,33 @@ def handle_client_connection(conn: socket.socket,
     """
     Handle valid client connection
     """
-    logging.debug(f'Connected by: {address}')
+    logging.debug('Connected by: %s', address)
 
     with conn:
         try:
             raw_bytes = receive(conn)
             request = parse_request(raw_bytes)
             response = handle_request(request, document_root)
-            logging.info(f'{address}: {request.method} {request.target}')
+            logging.info(f'%s: %s %s',
+                         address,
+                         request.method,
+                         request.target)
         except HTTPException as exc:
             status = exc.args[0]
             response = HTTPResponse.error(status)
-            logging.info(f'{address}: HTTP exception "{response.status}".')
+            logging.info('%s: HTTP exception "%s"',
+                         address, response.status)
         except Exception:
-            logging.exception(f'{address}: Unexpected error')
+            logging.exception('%s: Unexpected error', address)
             status = HTTPStatus.INTERNAL_SERVER_ERROR
             response = HTTPResponse.error(status)
 
         try:
             send_response(conn, response)
         except Exception:
-            logging.exception(f"{address}: Can't send a response")
+            logging.exception("%s: Can't send a response", address)
 
-    logging.debug(f'{address}: connection closed')
+    logging.debug('%s: connection closed', address)
 
 
 def wait_connection(listening_socket: socket.socket,
@@ -197,7 +202,7 @@ def wait_connection(listening_socket: socket.socket,
     """
     Serve connections forever
     """
-    logging.debug(f'Worker-{thread_id} has been started')
+    logging.debug('Worker-%s has been started', thread_id)
     while True:
         try:
             conn, address = listening_socket.accept()
@@ -242,7 +247,7 @@ def serve_forever(address: str,
             thread.start()
 
         logging.info(
-            f'Running on http://%s:%s/ (Press CTRL+C to quit)',
+            'Running on http://%s:%s/ (Press CTRL+C to quit)',
             address,
             port)
 

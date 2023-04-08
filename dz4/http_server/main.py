@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 Simple HTTP server
 Uses multiple threads, number specified in arguments
