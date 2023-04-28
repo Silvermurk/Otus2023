@@ -76,7 +76,7 @@ class UserAdminCreationForm(forms.ModelForm):
         """
         Save password in hash form
         """
-        user = super(UserAdminCreationForm, self).save(commit=False)
+        user = super().save(commit=False)
         user.set_password(self.cleaned_data["password1"])
         if commit:
             user.save()
