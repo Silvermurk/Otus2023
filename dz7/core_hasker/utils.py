@@ -1,6 +1,14 @@
-from django.utils import timezone
+# -*- coding: utf-8 -*-
+# pylint:disable=too-many-return-statements
+# pylint:disable=protected-access
+# pylint:disable=consider-using-f-string
+"""
+Class for different utilities
+"""
 import re
+
 from django.template.defaultfilters import slugify
+from django.utils import timezone
 
 
 def pretty_date(datetime_field):
@@ -67,11 +75,11 @@ def unique_slugify(instance, value, slug_field_name='slug', queryset=None,
     _next = 2
     while not slug or queryset.filter(**{slug_field_name: slug}):
         slug = original_slug
-        end = '%s%s' % (slug_separator, _next)
+        end = f'{slug_separator}{_next}'
         if slug_len and len(slug) + len(end) > slug_len:
-            slug = slug[:slug_len-len(end)]
+            slug = slug[:slug_len - len(end)]
             slug = _slug_strip(slug, slug_separator)
-        slug = '%s%s' % (slug, end)
+        slug = f'{slug}{end}'
         _next += 1
 
     setattr(instance, slug_field.attname, slug)
