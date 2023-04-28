@@ -1,3 +1,6 @@
+# -*- coding: utf-8 -*-
+# pylint:disable=too-few-public-methods
+
 """
 Admin page for django project
 """
