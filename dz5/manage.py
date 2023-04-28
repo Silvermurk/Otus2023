@@ -1,4 +1,9 @@
-#!/usr/bin/env python
+# !/usr/bin/env python
+# -*- coding: utf-8 -*-
+"""
+Main manage class for django project
+"""
+
 import os
 import sys
 
@@ -10,5 +15,5 @@ if __name__ == "__main__":
         raise ImportError(
             'Please install django, django-widget-tweaks and django_extensions,'
             'also activate Venv throu ./scripts/venv/activate'
-        ) from exc
+            ) from exc
     execute_from_command_line(sys.argv)

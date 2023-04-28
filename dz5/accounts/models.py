@@ -1,14 +1,19 @@
+# -*- coding: utf-8 -*-
+"""
+All user and admin pages of a django project
+"""
+
 from django.db import models
 from django.contrib.auth.models import (
     BaseUserManager, AbstractBaseUser
     )
 from django.urls import reverse
-"""
-All user and admin pages of a django project
-"""
 
 
 class DjangoUserManager(BaseUserManager):
+    """
+    User manager for django project
+    """
     def create_user(self, email, login, avatar, password=None):
         """
         Creates and saves a User with the given email, date of
@@ -47,6 +52,9 @@ class DjangoUserManager(BaseUserManager):
 
 
 class HaskerUser(AbstractBaseUser):
+    """
+    User class for django
+    """
     email = models.EmailField(
         verbose_name='e-mail address',
         max_length=255,
@@ -63,7 +71,7 @@ class HaskerUser(AbstractBaseUser):
     REQUIRED_FIELDS = ['avatar', 'email']
 
     def __str__(self):
-        return self.login
+        return str(self.login)
 
     @staticmethod
     def has_permissions():

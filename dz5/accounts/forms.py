@@ -1,10 +1,13 @@
+# -*- coding: utf-8 -*-
+# pylint:disable=too-few-public-methods
+"""
+All forms that are used in Django project
+"""
+
 from django import forms
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 
 from .models import HaskerUser
-"""
-All forms that are used in Django project
-"""
 
 
 class RegisterForm(forms.ModelForm):
@@ -15,17 +18,26 @@ class RegisterForm(forms.ModelForm):
     password2 = forms.CharField(label='Confirm password', widget=forms.PasswordInput)
 
     class Meta:
+        """
+        Django meta class
+        """
         model = HaskerUser
         fields = ('login', 'email', 'avatar')
 
     def clean_email(self):
+        """
+        Clean method for email field
+        """
         email = self.cleaned_data.get('email')
-        qs = HaskerUser.objects.filter(email=email)
-        if qs.exists():
+        clean_email = HaskerUser.objects.filter(email=email)
+        if clean_email.exists():
             raise forms.ValidationError("email is taken")
         return email
 
     def clean_password(self):
+        """
+        Clean method for password field
+        """
         password1 = self.cleaned_data.get("password1")
         password2 = self.cleaned_data.get("password2")
         if password1 and password2 and password1 != password2:
@@ -44,6 +56,9 @@ class UserAdminCreationForm(forms.ModelForm):
                                 widget=forms.PasswordInput)
 
     class Meta:
+        """
+        Django meta class
+        """
         model = HaskerUser
         fields = ('login', 'email', 'avatar')
 
@@ -76,6 +91,9 @@ class UserAdminChangeForm(forms.ModelForm):
     password = ReadOnlyPasswordHashField()
 
     class Meta:
+        """
+        Django meta class
+        """
         model = HaskerUser
         fields = ('login', 'email', 'password',
                   'avatar', 'is_active', 'is_admin')
@@ -94,9 +112,11 @@ class UserChangeForm(forms.ModelForm):
     """
 
     class Meta:
+        """
+        Django meta class
+        """
         model = HaskerUser
         fields = ('login', 'email', 'avatar')
 
     login = forms.CharField(
         widget=forms.TextInput(attrs={'readonly': 'readonly'}))
-
