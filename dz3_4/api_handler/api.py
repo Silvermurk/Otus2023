@@ -15,12 +15,12 @@ import logging
 import uuid
 from http.server import HTTPServer, BaseHTTPRequestHandler
 
-from dz3.api_handler.scoring import get_score, get_interests
-from dz3.api_handler.store import Store
-from dz3.fields.fields import (DeclarativeFieldsMetaclass,
-                               EMPTY_VALUES, ClientIDsField, DateField,
-                               CharField, EmailField, BirthDayField,
-                               PhoneField, GenderField, ArgumentsField)
+from dz3_4.api_handler.scoring import get_score, get_interests
+from dz3_4.api_handler.store import Store
+from dz3_4.fields.fields import (DeclarativeFieldsMetaclass,
+                                 EMPTY_VALUES, ClientIDsField, DateField,
+                                 CharField, EmailField, BirthDayField,
+                                 PhoneField, GenderField, ArgumentsField)
 
 # Looks ugly, but it was in  homework example
 # so left untouched for compatibility

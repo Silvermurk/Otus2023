@@ -7,9 +7,9 @@ Module for field tests
 
 import pytest
 
-from dz3.fields.fields import (CharField, EmailField, PhoneField, DateField,
-                               BirthDayField, GenderField, ArgumentsField,
-                               ClientIDsField)
+from dz3_4.fields.fields import (CharField, EmailField, PhoneField, DateField,
+                                 BirthDayField, GenderField, ArgumentsField,
+                                 ClientIDsField)
 
 
 # CHAR FIELDS

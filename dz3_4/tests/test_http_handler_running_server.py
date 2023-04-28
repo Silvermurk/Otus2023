@@ -15,7 +15,7 @@ import json
 import pytest
 import requests
 
-from dz3.api_handler.api import ADMIN_LOGIN, ADMIN_SALT, SALT
+from dz3_4.api_handler.api import ADMIN_LOGIN, ADMIN_SALT, SALT
 
 
 # Requires API started at http://127.0.0.1:8080

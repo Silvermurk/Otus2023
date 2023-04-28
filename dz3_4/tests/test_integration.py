@@ -8,9 +8,9 @@ import logging
 
 import pytest
 
-from dz3.api_handler import store, scoring
-from dz3.api_handler.api import (ADMIN_LOGIN, ADMIN_SALT, SALT, FORBIDDEN,
-                                 method_handler, INVALID_REQUEST)
+from dz3_4.api_handler import store, scoring
+from dz3_4.api_handler.api import (ADMIN_LOGIN, ADMIN_SALT, SALT, FORBIDDEN,
+                                   method_handler, INVALID_REQUEST)
 
 
 def gen_good_auth(request_body):

@@ -14,7 +14,7 @@ import sys
 
 from pathlib import Path
 
-from dz4.http_server import httpd
+from dz5.http_server import httpd
 
 
 parser = argparse.ArgumentParser(
@@ -24,7 +24,7 @@ parser = argparse.ArgumentParser(
 parser.add_argument('-p', '--port', default=8080)
 parser.add_argument('-l', '--log', default='common.log')
 parser.add_argument('-w', '--workers', default=100)
-parser.add_argument('-r', '--root', default='E:/Work/Otus2023/dz4/tests/httptest/folder')
+parser.add_argument('-r', '--root', default='E:/Work/Otus2023/dz5/tests/httptest/folder')
 parser.add_argument('-a', '--address', default='localhost')
 
 

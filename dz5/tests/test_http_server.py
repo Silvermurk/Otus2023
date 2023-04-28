@@ -15,7 +15,7 @@ from http.client import HTTPConnection
 
 import pytest
 
-from dz4.http_server import httpd
+from dz5.http_server import httpd
 
 
 def find_free_port():

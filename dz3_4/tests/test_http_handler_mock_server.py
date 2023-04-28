@@ -12,7 +12,7 @@ import hashlib
 import datetime
 import pytest
 
-from dz3.api_handler.api import ADMIN_LOGIN, ADMIN_SALT, SALT, MainHTTPHandler
+from dz3_4.api_handler.api import ADMIN_LOGIN, ADMIN_SALT, SALT, MainHTTPHandler
 
 
 def gen_good_auth(request_body):

@@ -7,7 +7,7 @@ Admin page for django project
 
 from django.contrib import admin
 
-from dz5.core_hasker.models import Question, Answer
+from dz7.core_hasker.models import Question, Answer
 
 
 class QuestionAdmin(admin.ModelAdmin):
