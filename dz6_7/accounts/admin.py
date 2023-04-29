@@ -7,10 +7,11 @@ Admin page of a django project
 
 from django import forms
 from django.contrib import admin
-from django.contrib.auth.models import Group
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
-from .models import HaskerUser
+from django.contrib.auth.models import Group
+
+from .models import MyUser
 
 
 class UserCreationForm(forms.ModelForm):
@@ -25,7 +26,7 @@ class UserCreationForm(forms.ModelForm):
         """
         Django meta class
         """
-        model = HaskerUser
+        model = MyUser
         fields = ('email', 'login', 'avatar')
 
     def clean_password(self):
@@ -60,7 +61,7 @@ class UserChangeForm(forms.ModelForm):
         """
         Django meta class
         """
-        model = HaskerUser
+        model = MyUser
         fields = ('email', 'login', 'password',
                   'avatar', 'is_active', 'is_admin')
 
@@ -87,17 +88,17 @@ class UserAdmin(BaseUserAdmin):
         (None, {'fields': ('login', 'email', 'password')}),
         ('Personal info', {'fields': ('avatar',)}),
         ('Permissions', {'fields': ('is_admin',)}),
-    )
+        )
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
             'fields': ('login', 'email', 'avatar', 'password1', 'password2')}
-        ),
-    )
+         ),
+        )
     search_fields = ('email',)
     ordering = ('email',)
     filter_horizontal = ()
 
 
-admin.site.register(HaskerUser, UserAdmin)
+admin.site.register(MyUser, UserAdmin)
 admin.site.unregister(Group)

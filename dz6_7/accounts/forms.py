@@ -7,7 +7,7 @@ All forms that are used in Django project
 from django import forms
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 
-from .models import HaskerUser
+from dz6_7.accounts.models import MyUser
 
 
 class RegisterForm(forms.ModelForm):
@@ -21,7 +21,7 @@ class RegisterForm(forms.ModelForm):
         """
         Django meta class
         """
-        model = HaskerUser
+        model = MyUser
         fields = ('login', 'email', 'avatar')
 
     def clean_email(self):
@@ -29,7 +29,7 @@ class RegisterForm(forms.ModelForm):
         Clean method for email field
         """
         email = self.cleaned_data.get('email')
-        clean_email = HaskerUser.objects.filter(email=email)
+        clean_email = MyUser.objects.filter(email=email)
         if clean_email.exists():
             raise forms.ValidationError("email is taken")
         return email
@@ -59,7 +59,7 @@ class UserAdminCreationForm(forms.ModelForm):
         """
         Django meta class
         """
-        model = HaskerUser
+        model = MyUser
         fields = ('login', 'email', 'avatar')
 
     def clean_password(self):
@@ -94,7 +94,7 @@ class UserAdminChangeForm(forms.ModelForm):
         """
         Django meta class
         """
-        model = HaskerUser
+        model = MyUser
         fields = ('login', 'email', 'password',
                   'avatar', 'is_active', 'is_admin')
 
@@ -115,7 +115,7 @@ class UserChangeForm(forms.ModelForm):
         """
         Django meta class
         """
-        model = HaskerUser
+        model = MyUser
         fields = ('login', 'email', 'avatar')
 
     login = forms.CharField(

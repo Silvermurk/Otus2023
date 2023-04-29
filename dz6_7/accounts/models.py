@@ -10,7 +10,7 @@ from django.contrib.auth.models import (
 from django.urls import reverse
 
 
-class DjangoUserManager(BaseUserManager):
+class MyUserManager(BaseUserManager):
     """
     User manager for django project
     """
@@ -51,7 +51,7 @@ class DjangoUserManager(BaseUserManager):
         return user
 
 
-class HaskerUser(AbstractBaseUser):
+class MyUser(AbstractBaseUser):
     """
     User class for django
     """
@@ -65,7 +65,7 @@ class HaskerUser(AbstractBaseUser):
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
 
-    objects = DjangoUserManager()
+    objects = MyUserManager()
 
     USERNAME_FIELD = 'login'
     REQUIRED_FIELDS = ['avatar', 'email']

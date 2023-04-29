@@ -20,7 +20,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '8y59e%0*7*3*1&9k28^rwtt^rr=!6w1b)-)k8=ls&yn6pn4hnh'
+SECRET_KEY = '8y09_a0*7**41&9k28^rwtt^rr=!))!0)-)k8=ls&0ppnn4hnh'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -74,23 +74,12 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'hasker.wsgi.application'
 
-
-# Database
-# https://docs.djangoproject.com/en/2.0/ref/settings/#databases
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-#     }
-# }
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'hasker',
         'USER': 'postgres',
-        'PASSWORD': 'kvr',
+        'PASSWORD': 'tempPasswoed',
         'HOST': 'localhost',
         'PORT': '5432',
     }

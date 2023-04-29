@@ -4,9 +4,10 @@ Django url pattern class
 """
 
 from django.urls import path
-from .views import QuestionListView, QuestionDetailView, \
-    QuestionCreateView, QuestionSearchListView, AnswerCreateView, QuestionVoteView, \
-    AnswerVoteView, error_404
+
+from dz6_7.core_hasker.views import QuestionListView, QuestionDetailView, \
+    QuestionCreateView, QuestionSearchListView, AnswerCreateView, \
+    QuestionVoteView, AnswerVoteView, error_404
 
 urlpatterns = [path('', QuestionListView.as_view(),
                     name='question_list'),

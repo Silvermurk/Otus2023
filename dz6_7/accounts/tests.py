@@ -1,2 +1,1 @@
-# -*- coding: utf-8 -*-
-# Some tests supposed to be here
+# Tests Go here

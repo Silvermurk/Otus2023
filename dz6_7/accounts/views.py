@@ -6,8 +6,9 @@ Views used in django project
 from django.urls import reverse_lazy
 from django.views import generic
 
-from .forms import UserChangeForm, UserAdminCreationForm
-from .models import HaskerUser
+from dz6_7.accounts.admin import UserChangeForm
+from dz6_7.accounts.forms import UserAdminCreationForm
+from dz6_7.accounts.models import MyUser
 
 
 class SignUp(generic.CreateView):
@@ -23,7 +24,7 @@ class UserProfileUpdateView(generic.UpdateView):
     """
     Update ciew
     """
-    model = HaskerUser
+    model = MyUser
     form_class = UserChangeForm
     template_name = "accounts/update.html"
     success_url = reverse_lazy('question_list')
