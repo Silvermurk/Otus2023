@@ -4,7 +4,7 @@ Url manager of a django project
 """
 from django.urls import path
 
-from dz6_7.accounts import views
+from dz6.accounts import views
 
 urlpatterns = [
     path('signup/', views.SignUp.as_view(), name='signup'),

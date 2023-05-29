@@ -12,7 +12,7 @@ from django.db import models
 from django.urls import reverse
 from django.utils import timezone
 
-from dz6_7.core_hasker.utils import pretty_date, unique_slugify
+from dz6.core_hasker.utils import pretty_date, unique_slugify
 
 
 class Question(models.Model):

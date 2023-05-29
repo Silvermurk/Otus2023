@@ -18,8 +18,8 @@ from django.urls import reverse
 from django.utils import timezone
 from django.views.generic import ListView, DetailView, CreateView, View
 
-from dz6_7.core_hasker.forms import AnswerCreateForm, QuestionCreateForm
-from dz6_7.core_hasker.models import Question, QuestionVote, Answer, AnswerVote
+from dz6.core_hasker.forms import AnswerCreateForm, QuestionCreateForm
+from dz6.core_hasker.models import Question, QuestionVote, Answer, AnswerVote
 
 
 def error_404(request):

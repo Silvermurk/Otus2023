@@ -6,9 +6,9 @@ Views used in django project
 from django.urls import reverse_lazy
 from django.views import generic
 
-from dz6_7.accounts.admin import UserChangeForm
-from dz6_7.accounts.forms import UserAdminCreationForm
-from dz6_7.accounts.models import MyUser
+from dz6.accounts.admin import UserChangeForm
+from dz6.accounts.forms import UserAdminCreationForm
+from dz6.accounts.models import MyUser
 
 
 class SignUp(generic.CreateView):

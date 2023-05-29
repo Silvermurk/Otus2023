@@ -5,7 +5,7 @@ Django url pattern class
 
 from django.urls import path
 
-from dz6_7.core_hasker.views import QuestionListView, QuestionDetailView, \
+from dz6.core_hasker.views import QuestionListView, QuestionDetailView, \
     QuestionCreateView, QuestionSearchListView, AnswerCreateView, \
     QuestionVoteView, AnswerVoteView, error_404
 

@@ -7,7 +7,7 @@ All forms that are used in Django project
 from django import forms
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 
-from dz6_7.accounts.models import MyUser
+from dz6.accounts.models import MyUser
 
 
 class RegisterForm(forms.ModelForm):
