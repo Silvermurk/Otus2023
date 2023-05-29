@@ -1,3 +1,7 @@
+"""
+Module to visualize, compare and learn regression app
+"""
+
 import pandas as pd
 import tqdm
 from matplotlib import pyplot as plt

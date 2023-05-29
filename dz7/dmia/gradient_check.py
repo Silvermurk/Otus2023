@@ -1,3 +1,7 @@
+#pylint_disable=wildcard-import
+"""
+Gradient check module for learning app
+"""
 import numpy as np
 from random import randrange
 
