@@ -27,7 +27,7 @@ jobs:
         pip install pandas
         pip install tqdm
         pip install matplotlib
-        pip install sklearn
+        pip install scikit-learn
     - name: Analysing the code with pylint
       run: |
         pylint $(git ls-files '*.py')
