@@ -24,7 +24,10 @@ jobs:
         pip install sql
         pip install django
         pip install django-widget-tweaks
-        pip install django_extensions
+        pip install pandas
+        pip install tqdm
+        pip install matplotlib
+        pip install sklearn
     - name: Analysing the code with pylint
       run: |
         pylint $(git ls-files '*.py')
