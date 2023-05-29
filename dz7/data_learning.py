@@ -1,18 +1,18 @@
 """
 Module to visualize, compare and learn regression app
 """
-
+import numpy as np
 import pandas as pd
 import tqdm
 from matplotlib import pyplot as plt
 from sklearn import linear_model
 from sklearn.feature_extraction.text import TfidfVectorizer
 
-from dmia.gradient_check import *
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 
 from dz7.dmia.classifiers.logistic_regression import LogisticRegression
+from dz7.dmia.gradient_check import grad_check_sparse
 
 
 def data_learning():
