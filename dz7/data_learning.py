@@ -1,3 +1,4 @@
+# pylint:disable=too-many-locals
 """
 Module to visualize, compare and learn regression app
 """
@@ -31,30 +32,32 @@ def data_learning():
     print('review_summaries end: %s', review_summaries[:5])
     vectorizer = TfidfVectorizer()
     tfidfed = vectorizer.fit_transform(review_summaries)
-    X = tfidfed
-    y = train_df.Prediction.values
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, y, train_size=0.7, random_state=42)
-    X_train_sample = X_train[:10000]
+    vector_x = tfidfed
+    vector_y = train_df.Prediction.values
+    x_train, x_test, y_train, y_test = train_test_split(
+        vector_x, vector_y, train_size=0.7, random_state=42)
+    x_train_sample = x_train[:10000]
     y_train_sample = y_train[:10000]
     clf = LogisticRegression()
-    clf.w = np.random.randn(X_train_sample.shape[1] + 1) * 2
+    clf.w = np.random.randn(x_train_sample.shape[1] + 1) * 2
     loss, grad = clf.loss(
-        LogisticRegression.append_biases(X_train_sample),
+        LogisticRegression.append_biases(x_train_sample),
         y_train_sample, 0.0)
+    print('loss=%s\n'
+          'grad=%s', loss, grad)
 
     f = lambda w: clf.loss(
-        LogisticRegression.append_biases(X_train_sample),
+        LogisticRegression.append_biases(x_train_sample),
         y_train_sample,
         0.0)[0]
     grad_numerical = grad_check_sparse(f, clf.w, grad, 10)
     print("grad_numerical: %s", grad_numerical)
     clf = LogisticRegression()
-    clf.train(X_train, y_train)
+    clf.train(x_train, y_train)
     print("Train f1-score = %s.3f",
-          accuracy_score(y_train, clf.predict(X_train)))
+          accuracy_score(y_train, clf.predict(x_train)))
     print("Test f1-score = %s.3f",
-          accuracy_score(y_test, clf.predict(X_test)))
+          accuracy_score(y_test, clf.predict(x_test)))
 
     clf = LogisticRegression()
     train_scores = []
@@ -62,14 +65,14 @@ def data_learning():
     num_iters = 3000
 
     for _ in tqdm.trange(num_iters):
-        clf.train(X_train,
+        clf.train(x_train,
                   y_train,
                   learning_rate=1.0,
                   num_iters=1,
                   batch_size=256,
                   reg=1e-3)
-        train_scores.append(accuracy_score(y_train, clf.predict(X_train)))
-        test_scores.append(accuracy_score(y_test, clf.predict(X_test)))
+        train_scores.append(accuracy_score(y_train, clf.predict(x_train)))
+        test_scores.append(accuracy_score(y_test, clf.predict(x_test)))
         plt.figure(figsize=(10, 8))
         plt.plot(train_scores, 'r', test_scores, 'b')
     clf = linear_model.SGDClassifier(
@@ -80,11 +83,11 @@ def data_learning():
         alpha=1e-3,
         eta0=1.0,
         learning_rate="constant")
-    clf.fit(X_train, y_train)
+    clf.fit(x_train, y_train)
     print("Train accuracy = %s.3f",
-          accuracy_score(y_train, clf.predict(X_train)))
+          accuracy_score(y_train, clf.predict(x_train)))
     print("Test accuracy = %s.3f",
-          accuracy_score(y_test, clf.predict(X_test)))
+          accuracy_score(y_test, clf.predict(x_test)))
 
 
 if __name__ == '__main__':
