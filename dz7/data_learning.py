@@ -1,4 +1,5 @@
 # pylint:disable=too-many-locals
+# pylint:disable=unnecessary-lambda-assignment
 """
 Module to visualize, compare and learn regression app
 """
@@ -46,11 +47,11 @@ def data_learning():
     print('loss=%s\n'
           'grad=%s', loss, grad)
 
-    f = lambda w: clf.loss(
+    log_loss = lambda w: clf.loss(
         LogisticRegression.append_biases(x_train_sample),
         y_train_sample,
         0.0)[0]
-    grad_numerical = grad_check_sparse(f, clf.w, grad, 10)
+    grad_numerical = grad_check_sparse(log_loss, clf.w, grad, 10)
     print("grad_numerical: %s", grad_numerical)
     clf = LogisticRegression()
     clf.train(x_train, y_train)
