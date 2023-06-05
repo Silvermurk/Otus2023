@@ -7,7 +7,6 @@ Module to visualize, compare and learn regression app
 import numpy as np
 import pandas as pd
 import tqdm
-from matplotlib import pyplot as plt
 from sklearn import linear_model
 from sklearn.feature_extraction.text import TfidfVectorizer
 
