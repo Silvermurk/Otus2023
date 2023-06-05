@@ -13,23 +13,23 @@ class LogisticRegression:
     Class for training our network on given data
     """
     def __init__(self):
-        self.w = None
+        self.weight = None
         self.loss_history = None
 
-    def train(self, X, y, learning_rate=1e-3, reg=1e-5, num_iters=100,
+    def train(self, bias_x, y, learning_rate=1e-3, reg=1e-5, num_iters=100,
               batch_size=200, verbose=False):
         """
         Train this classifier using stochastic gradient descent.
 
         Inputs:
         - X: N x D array of training data. Each training point is a
-        D-dimensional
-             column.
+        D-dimensional column.
         - y: 1-dimensional array of length N with labels 0-1, for 2 classes.
         - learning_rate: (float) learning rate for optimization.
         - reg: (float) regularization strength.
         - num_iters: (integer) number of steps to take when optimizing
-        - batch_size: (integer) number of training examples to use at each step.
+        - batch_size: (integer) number of training examples
+        to use at each step.
         - verbose: (boolean) If true, print progress during optimization.
 
         Outputs:
@@ -37,11 +37,11 @@ class LogisticRegression:
         each training iteration.
         """
         # Add a column of ones to X for the bias sake.
-        X = LogisticRegression.append_biases(X)
-        num_train, dim = X.shape
-        if self.w is None:
+        bias_x = LogisticRegression.append_biases(bias_x)
+        num_train, dim = bias_x.shape
+        if self.weight is None:
             # lazily initialize weights
-            self.w = np.random.randn(dim) * 0.01
+            self.weight = np.random.randn(dim) * 0.01
 
         # Run stochastic gradient descent to optimize W
         self.loss_history = []
@@ -57,21 +57,21 @@ class LogisticRegression:
             # replacement is faster than sampling without replacement.              #
             #########################################################################
             indexes = np.random.choice(num_train, batch_size)
-            X_batch = X[indexes, :]
+            x_batch = bias_x[indexes, :]
             y_batch = y[indexes]
             #########################################################################
             #                       END OF YOUR CODE                                #
             #########################################################################
 
             # evaluate loss and gradient
-            loss, gradW = self.loss(X_batch, y_batch, reg)
+            loss, gradW = self.loss(x_batch, y_batch, reg)
             self.loss_history.append(loss)
             # perform parameter update
             #########################################################################
             # Update the weights using the gradient and the learning rate.          #
             #########################################################################
 
-            self.w -= learning_rate * gradW
+            self.weight -= learning_rate * gradW
 
             #########################################################################
             #                       END OF YOUR CODE                                #
@@ -82,7 +82,7 @@ class LogisticRegression:
 
         return self
 
-    def predict_proba(self, X, append_bias=False):
+    def predict_proba(self, x_bias, append_bias=False):
         """
         Use the trained weights of this linear classifier to predict probabilities for
         data points.
@@ -96,13 +96,13 @@ class LogisticRegression:
           array with a shape (N, 2), and each row is a distribution of classes [prob_class_0, prob_class_1].
         """
         if append_bias:
-            X = LogisticRegression.append_biases(X)
+            x_bias = LogisticRegression.append_biases(x_bias)
         ###########################################################################
         # Implement this method. Store the probabilities of classes in y_proba.   #
         # Hint: It might be helpful to use np.vstack and np.sum                   #
         ###########################################################################
 
-        proba = self.sigmoid(X.dot(self.w.T))
+        proba = self.sigmoid(x_bias.dot(self.weight.T))
         y_proba = np.vstack((1 - proba, proba)).T
 
         ###########################################################################
@@ -110,12 +110,12 @@ class LogisticRegression:
         ###########################################################################
         return y_proba
 
-    def predict(self, X):
+    def predict(self, x_bias):
         """
         Use the ```predict_proba``` method to predict labels for data points.
 
         Inputs:
-        - X: N x D array of training data. Each column is a D-dimensional point.
+        - x_bias: N x D array of training data. Each column is a D-dimensional point.
 
         Returns:
         - y_pred: Predicted labels for the data in X. y_pred is a 1-dimensional
@@ -126,7 +126,7 @@ class LogisticRegression:
         ###########################################################################
         # Implement this method. Store the predicted labels in y_pred.            #
         ###########################################################################
-        y_proba = self.predict_proba(X, append_bias=True)
+        y_proba = self.predict_proba(x_bias, append_bias=True)
         y_pred = np.argmax(y_proba, axis=1)
 
         ###########################################################################
@@ -144,20 +144,20 @@ class LogisticRegression:
         - loss as single float
         - gradient with respect to weights w; an array of same shape as w
         """
-        dw = np.zeros_like(self.w)  # initialize the gradient as zero
+        dual_weight = np.zeros_like(self.weight)  # initialize the gradient as zero
         loss = 0
         # Compute loss and gradient. Your code should not contain python loops.
 
         """Loss = -(1 / m) * sum(yi * log(pi) + (1 - yi) * log(1 - pi))"""
         """Grad = (1/m) (pi - yi) * xi"""
-        m = X_batch.shape[0]
-        pi = self.sigmoid(X_batch.dot(self.w))
+        modus = X_batch.shape[0]
+        pi = self.sigmoid(X_batch.dot(self.weight))
 
         loss = -np.dot(y_batch, np.log(pi)) - np.dot((1 - y_batch),
                                                      np.log(1.0-pi))
-        loss = loss / m
+        loss = loss / modus
 
-        dw = (1 / m) * (pi - y_batch) * X_batch
+        dual_weight = (1 / modus) * (pi - y_batch) * X_batch
 
         # Right now the loss is a sum over all training examples, but we want it
         # to be an average instead so we divide by num_train.
@@ -167,24 +167,24 @@ class LogisticRegression:
         # Add regularization to the loss and gradient.
         # Note that you have to exclude bias term in regularization.
 
-        loss += (reg / (2.0 * m)) * np.dot(self.w[:-1], self.w[:-1])
-        dw[:-1] = dw[:-1] + (reg * self.w[:-1]) / m
+        loss += (reg / (2.0 * modus)) * np.dot(self.weight[:-1], self.weight[:-1])
+        dual_weight[:-1] = dual_weight[:-1] + (reg * self.weight[:-1]) / modus
 
-        return loss, dw
-
-    @staticmethod
-    def append_biases(X):
-        return sparse.hstack((X, np.ones(X.shape[0])[:, np.newaxis])).tocsr()
-
-    def sigmoid(self, x):
-        return 1.0 / (1.0 + np.exp(-x))
+        return loss, dual_weight
 
     @staticmethod
-    def safe_sparse_dot(a, b, dense_output=False):
-        if isinstance(a, spmatrix) or isinstance(b, spmatrix):
-            ret = a * b
+    def append_biases(x_bias):
+        return sparse.hstack((x_bias, np.ones(x_bias.shape[0])[:, np.newaxis])).tocsr()
+
+    def sigmoid(self, x_bias):
+        return 1.0 / (1.0 + np.exp(-x_bias))
+
+    @staticmethod
+    def safe_sparse_dot(a_dot, b_dot, dense_output=False):
+        if isinstance(a_dot, spmatrix) or isinstance(b, spmatrix):
+            ret = a_dot * b_dot
             if dense_output and hasattr(ret, "toarray"):
                 ret = ret.toarray()
             return ret
         else:
-            return np.dot(a, b)
+            return np.dot(a_dot, b_dot)

@@ -40,7 +40,7 @@ def test_data_learning():
     x_train_sample = x_train[:10000]
     y_train_sample = y_train[:10000]
     clf = LogisticRegression()
-    clf.w = np.random.randn(x_train_sample.shape[1] + 1) * 2
+    clf.weight = np.random.randn(x_train_sample.shape[1] + 1) * 2
     loss, grad = clf.loss(
         LogisticRegression.append_biases(x_train_sample),
         y_train_sample, 0.0)
@@ -51,7 +51,7 @@ def test_data_learning():
         LogisticRegression.append_biases(x_train_sample),
         y_train_sample,
         0.0)[0]
-    grad_check_sparse(log_loss, clf.w, grad, 10)
+    grad_check_sparse(log_loss, clf.weight, grad, 10)
     clf = LogisticRegression()
     clf.train(x_train, y_train)
     print("Train f1-score = %s",
