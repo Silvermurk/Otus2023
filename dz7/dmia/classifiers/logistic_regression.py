@@ -1,11 +1,17 @@
+# -*- coding: utf-8 -*-
+"""
+Logistic regression logic
+"""
 import numpy as np
 from joblib.numpy_pickle_utils import xrange
 from scipy import sparse
 from scipy.sparse import spmatrix
-from sklearn.utils.extmath import softmax
 
 
 class LogisticRegression:
+    """
+    Class for training our network on given data
+    """
     def __init__(self):
         self.w = None
         self.loss_history = None
@@ -16,7 +22,8 @@ class LogisticRegression:
         Train this classifier using stochastic gradient descent.
 
         Inputs:
-        - X: N x D array of training data. Each training point is a D-dimensional
+        - X: N x D array of training data. Each training point is a
+        D-dimensional
              column.
         - y: 1-dimensional array of length N with labels 0-1, for 2 classes.
         - learning_rate: (float) learning rate for optimization.
@@ -26,7 +33,8 @@ class LogisticRegression:
         - verbose: (boolean) If true, print progress during optimization.
 
         Outputs:
-        A list containing the value of the loss function at each training iteration.
+        A list containing the value of the loss function at
+        each training iteration.
         """
         # Add a column of ones to X for the bias sake.
         X = LogisticRegression.append_biases(X)
@@ -39,7 +47,6 @@ class LogisticRegression:
         self.loss_history = []
         for it in xrange(num_iters):
             #########################################################################
-            # TODO:                                                                 #
             # Sample batch_size elements from the training data and their           #
             # corresponding labels to use in this round of gradient descent.        #
             # Store the data in X_batch and their corresponding labels in           #
@@ -61,7 +68,6 @@ class LogisticRegression:
             self.loss_history.append(loss)
             # perform parameter update
             #########################################################################
-            # TODO:                                                                 #
             # Update the weights using the gradient and the learning rate.          #
             #########################################################################
 
@@ -92,7 +98,6 @@ class LogisticRegression:
         if append_bias:
             X = LogisticRegression.append_biases(X)
         ###########################################################################
-        # TODO:                                                                   #
         # Implement this method. Store the probabilities of classes in y_proba.   #
         # Hint: It might be helpful to use np.vstack and np.sum                   #
         ###########################################################################
@@ -119,7 +124,6 @@ class LogisticRegression:
         """
 
         ###########################################################################
-        # TODO:                                                                   #
         # Implement this method. Store the predicted labels in y_pred.            #
         ###########################################################################
         y_proba = self.predict_proba(X, append_bias=True)
@@ -149,7 +153,8 @@ class LogisticRegression:
         m = X_batch.shape[0]
         pi = self.sigmoid(X_batch.dot(self.w))
 
-        loss = -np.dot(y_batch, np.log(pi)) - np.dot((1 - y_batch), np.log(1.0-pi))
+        loss = -np.dot(y_batch, np.log(pi)) - np.dot((1 - y_batch),
+                                                     np.log(1.0-pi))
         loss = loss / m
 
         dw = (1 / m) * (pi - y_batch) * X_batch

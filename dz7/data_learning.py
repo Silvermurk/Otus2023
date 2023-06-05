@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # pylint:disable=too-many-locals
 # pylint:disable=unnecessary-lambda-assignment
 """
