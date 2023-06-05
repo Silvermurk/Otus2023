@@ -17,7 +17,7 @@ from dz7.dmia.classifiers.logistic_regression import LogisticRegression
 from dz7.dmia.gradient_check import grad_check_sparse
 
 
-def data_learning():
+def test_data_learning():
     """
     Method for learning how learning actually works and visualize data
     """
@@ -51,13 +51,12 @@ def data_learning():
         LogisticRegression.append_biases(x_train_sample),
         y_train_sample,
         0.0)[0]
-    grad_numerical = grad_check_sparse(log_loss, clf.w, grad, 10)
-    print("grad_numerical: %s", grad_numerical)
+    grad_check_sparse(log_loss, clf.w, grad, 10)
     clf = LogisticRegression()
     clf.train(x_train, y_train)
-    print("Train f1-score = %s.3f",
+    print("Train f1-score = %s",
           accuracy_score(y_train, clf.predict(x_train)))
-    print("Test f1-score = %s.3f",
+    print("Test f1-score = %s",
           accuracy_score(y_test, clf.predict(x_test)))
 
     clf = LogisticRegression()
@@ -74,8 +73,7 @@ def data_learning():
                   reg=1e-3)
         train_scores.append(accuracy_score(y_train, clf.predict(x_train)))
         test_scores.append(accuracy_score(y_test, clf.predict(x_test)))
-        plt.figure(figsize=(10, 8))
-        plt.plot(train_scores, 'r', test_scores, 'b')
+    # 3000 will take too much pipeline time and fail 60 sec GitHub watchdog
     clf = linear_model.SGDClassifier(
         max_iter=1000,
         random_state=42,
@@ -85,11 +83,9 @@ def data_learning():
         eta0=1.0,
         learning_rate="constant")
     clf.fit(x_train, y_train)
-    print("Train accuracy = %s.3f",
+    print("Train accuracy = %s",
           accuracy_score(y_train, clf.predict(x_train)))
-    print("Test accuracy = %s.3f",
+    print("Test accuracy = %s",
           accuracy_score(y_test, clf.predict(x_test)))
-
-
-if __name__ == '__main__':
-    data_learning()
+    assert accuracy_score(y_train, clf.predict(x_train)) > 0.8
+    assert accuracy_score(y_test, clf.predict(x_test)) > 0.8
