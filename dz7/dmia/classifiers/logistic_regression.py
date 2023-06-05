@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+# pylint_disable=too-many-arguments
+# pylint_disable=too-many-locals
 """
 Logistic regression logic
 """
@@ -16,15 +18,15 @@ class LogisticRegression:
         self.weight = None
         self.loss_history = None
 
-    def train(self, bias_x, y, learning_rate=1e-3, reg=1e-5, num_iters=100,
+    def train(self, bias_x, bias_y, learning_rate=1e-3, reg=1e-5, num_iters=100,
               batch_size=200, verbose=False):
         """
         Train this classifier using stochastic gradient descent.
 
         Inputs:
-        - X: N x D array of training data. Each training point is a
+        - bias_x: N x D array of training data. Each training point is a
         D-dimensional column.
-        - y: 1-dimensional array of length N with labels 0-1, for 2 classes.
+        - bias_y: 1-dimensional array of length N with labels 0-1, for 2 classes.
         - learning_rate: (float) learning rate for optimization.
         - reg: (float) regularization strength.
         - num_iters: (integer) number of steps to take when optimizing
@@ -45,7 +47,7 @@ class LogisticRegression:
 
         # Run stochastic gradient descent to optimize W
         self.loss_history = []
-        for it in xrange(num_iters):
+        for iter in xrange(num_iters):
             #########################################################################
             # Sample batch_size elements from the training data and their           #
             # corresponding labels to use in this round of gradient descent.        #
@@ -58,27 +60,27 @@ class LogisticRegression:
             #########################################################################
             indexes = np.random.choice(num_train, batch_size)
             x_batch = bias_x[indexes, :]
-            y_batch = y[indexes]
+            y_batch = bias_y[indexes]
             #########################################################################
             #                       END OF YOUR CODE                                #
             #########################################################################
 
             # evaluate loss and gradient
-            loss, gradW = self.loss(x_batch, y_batch, reg)
+            loss, gradient_w = self.loss(x_batch, y_batch, reg)
             self.loss_history.append(loss)
             # perform parameter update
             #########################################################################
             # Update the weights using the gradient and the learning rate.          #
             #########################################################################
 
-            self.weight -= learning_rate * gradW
+            self.weight -= learning_rate * gradient_w
 
             #########################################################################
             #                       END OF YOUR CODE                                #
             #########################################################################
 
-            if verbose and it % 100 == 0:
-                print ('iteration %d / %d: loss %f' % (it, num_iters, loss))
+            if verbose and iter % 100 == 0:
+                print ('iteration %s / %s: loss %s', iter, num_iters, loss)
 
         return self
 
@@ -93,7 +95,8 @@ class LogisticRegression:
 
         Returns:
         - y_proba: Probabilities of classes for the data in X. y_pred is a 2-dimensional
-          array with a shape (N, 2), and each row is a distribution of classes [prob_class_0, prob_class_1].
+          array with a shape (N, 2), and each row is a distribution of
+          classes [prob_class_0, prob_class_1].
         """
         if append_bias:
             x_bias = LogisticRegression.append_biases(x_bias)
@@ -134,7 +137,7 @@ class LogisticRegression:
         ###########################################################################
         return y_pred
 
-    def loss(self, X_batch, y_batch, reg):
+    def loss(self, x_batch, y_batch, reg):
         """Logistic Regression loss function
         Inputs:
         - X: N x D array of data. Data are D-dimensional rows
@@ -144,20 +147,16 @@ class LogisticRegression:
         - loss as single float
         - gradient with respect to weights w; an array of same shape as w
         """
-        dual_weight = np.zeros_like(self.weight)  # initialize the gradient as zero
-        loss = 0
-        # Compute loss and gradient. Your code should not contain python loops.
-
         """Loss = -(1 / m) * sum(yi * log(pi) + (1 - yi) * log(1 - pi))"""
         """Grad = (1/m) (pi - yi) * xi"""
-        modus = X_batch.shape[0]
-        pi = self.sigmoid(X_batch.dot(self.weight))
+        modus = x_batch.shape[0]
+        pi_number = self.sigmoid(x_batch.dot(self.weight))
 
-        loss = -np.dot(y_batch, np.log(pi)) - np.dot((1 - y_batch),
-                                                     np.log(1.0-pi))
+        loss = -np.dot(y_batch, np.log(pi_number)) - np.dot((1 - y_batch),
+                                                     np.log(1.0-pi_number))
         loss = loss / modus
 
-        dual_weight = (1 / modus) * (pi - y_batch) * X_batch
+        dual_weight = (1 / modus) * (pi_number - y_batch) * x_batch
 
         # Right now the loss is a sum over all training examples, but we want it
         # to be an average instead so we divide by num_train.
