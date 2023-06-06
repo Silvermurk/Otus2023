@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
-# pylint_disable=wildcard-import
-# pylint_disable=consider-using-generator
+# pylint: disable=consider-using-generator
 """
 Gradient check module for learning app
 """
