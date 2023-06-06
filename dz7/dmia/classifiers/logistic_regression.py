@@ -47,7 +47,7 @@ class LogisticRegression:
 
         # Run stochastic gradient descent to optimize W
         self.loss_history = []
-        for iter in xrange(num_iters):
+        for _iter in xrange(num_iters):
             #########################################################################
             # Sample batch_size elements from the training data and their           #
             # corresponding labels to use in this round of gradient descent.        #
@@ -79,8 +79,8 @@ class LogisticRegression:
             #                       END OF YOUR CODE                                #
             #########################################################################
 
-            if verbose and iter % 100 == 0:
-                print ('iteration %s / %s: loss %s', iter, num_iters, loss)
+            if verbose and _iter % 100 == 0:
+                print ('iteration %s / %s: loss %s', _iter, num_iters, loss)
 
         return self
 
@@ -146,9 +146,8 @@ class LogisticRegression:
         a tuple of:
         - loss as single float
         - gradient with respect to weights w; an array of same shape as w
-        """
-        """Loss = -(1 / m) * sum(yi * log(pi) + (1 - yi) * log(1 - pi))"""
-        """Grad = (1/m) (pi - yi) * xi"""
+        Loss = -(1 / m) * sum(yi * log(pi) + (1 - yi) * log(1 - pi))
+        Grad = (1/m) (pi - yi) * xi"""
         modus = x_batch.shape[0]
         pi_number = self.sigmoid(x_batch.dot(self.weight))
 
@@ -173,17 +172,25 @@ class LogisticRegression:
 
     @staticmethod
     def append_biases(x_bias):
+        """
+        Append bias to plot
+        """
         return sparse.hstack((x_bias, np.ones(x_bias.shape[0])[:, np.newaxis])).tocsr()
 
     def sigmoid(self, x_bias):
+        """
+        Calculate 1 / exp of bias
+        """
         return 1.0 / (1.0 + np.exp(-x_bias))
 
     @staticmethod
     def safe_sparse_dot(a_dot, b_dot, dense_output=False):
-        if isinstance(a_dot, spmatrix) or isinstance(b, spmatrix):
+        """
+        Set matrix to array on a and b dots
+        """
+        if isinstance(a_dot, spmatrix) or isinstance(b_dot, spmatrix):
             ret = a_dot * b_dot
             if dense_output and hasattr(ret, "toarray"):
                 ret = ret.toarray()
             return ret
-        else:
-            return np.dot(a_dot, b_dot)
+        return np.dot(a_dot, b_dot)
