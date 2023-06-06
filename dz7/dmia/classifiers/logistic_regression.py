@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-#pylint_disable=too-many-arguments
-#pylint_disable=too-many-locals
+# pylint_disable=too-many-arguments
+# pylint_disable=too-many-locals
 """
 Logistic regression logic
 """
@@ -14,6 +14,7 @@ class LogisticRegression:
     """
     Class for training our network on given data
     """
+
     def __init__(self):
         self.weight = None
         self.loss_history = None
@@ -80,7 +81,7 @@ class LogisticRegression:
             #########################################################################
 
             if verbose and _iter % 100 == 0:
-                print ('iteration %s / %s: loss %s', _iter, num_iters, loss)
+                print('iteration %s / %s: loss %s', _iter, num_iters, loss)
 
         return self
 
@@ -152,7 +153,7 @@ class LogisticRegression:
         pi_number = self.sigmoid(x_batch.dot(self.weight))
 
         loss = -np.dot(y_batch, np.log(pi_number)) - np.dot((1 - y_batch),
-                                                     np.log(1.0-pi_number))
+                                                            np.log(1.0 - pi_number))
         loss = loss / modus
 
         dual_weight = (1 / modus) * (pi_number - y_batch) * x_batch
@@ -160,7 +161,6 @@ class LogisticRegression:
         # Right now the loss is a sum over all training examples, but we want it
         # to be an average instead so we divide by num_train.
         # Note that the same thing must be done with gradient.
-
 
         # Add regularization to the loss and gradient.
         # Note that you have to exclude bias term in regularization.
