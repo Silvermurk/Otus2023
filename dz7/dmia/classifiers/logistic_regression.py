@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-# pylint_disable=too-many-arguments
-# pylint_disable=too-many-locals
+#pylint_disable=too-many-arguments
+#pylint_disable=too-many-locals
 """
 Logistic regression logic
 """

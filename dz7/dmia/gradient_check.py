@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 #pylint_disable=wildcard-import
 """
 Gradient check module for learning app
@@ -15,45 +16,45 @@ def eval_numerical_gradient(f, x):
   - x is the point (numpy array) to evaluate the gradient at
   """
 
-    fx = f(x)  # evaluate function value at original point
+    fx_elevate = f(x)  # evaluate function value at original point
     grad = np.zeros(x.shape)
-    h = 0.00001
+    height = 0.00001
 
     # iterate over all indexes in x
-    it = np.nditer(x, flags=['multi_index'], op_flags=['readwrite'])
-    while not it.finished:
+    it_index = np.nditer(x, flags=['multi_index'], op_flags=['readwrite'])
+    while not it_index.finished:
         # evaluate function at x+h
-        ix = it.multi_index
-        x[ix] += h  # increment by h
-        fxh = f(x)  # evalute f(x + h)
-        x[ix] -= h  # restore to previous value (very important!)
+        ix_elevated = it_index.multi_index
+        x[ix_elevated] += height  # increment by h
+        fxh_evaluated = f(x)  # evalute f(x + h)
+        x[ix_elevated] -= height  # restore to previous value (very important!)
 
         # compute the partial derivative
-        grad[ix] = (fxh - fx) / h  # the slope
-        print (ix, grad[ix])
-        it.iternext()  # step to next dimension
+        grad[ix_elevated] = (fxh_evaluated - fx_elevate) / height  # the slope
+        print(ix_elevated, grad[ix_elevated])
+        it_index.iternext()  # step to next dimension
     return grad
 
 
-def grad_check_sparse(f, x, analytic_grad, num_checks):
+def grad_check_sparse(function, x_bias, analytic_grad, num_checks):
     """
-  sample a few random elements and only return numerical
-  in this dimensions.
-  """
-    h = 1e-5
+    sample a few random elements and only return numerical
+    in this dimensions.
+    """
+    height = 1e-5
 
-    for i in xrange(num_checks):
-        ix = tuple([randrange(m) for m in x.shape])
+    for _ in xrange(num_checks):
+        ix_result = tuple([randrange(m) for m in x_bias.shape])
 
-        x[ix] += h  # increment by h
-        fxph = f(x)  # evaluate f(x + h)
-        x[ix] -= 2 * h  # increment by h
-        fxmh = f(x)  # evaluate f(x - h)
-        x[ix] += h  # reset
+        x_bias[ix_result] += height  # increment by h
+        fxph = function(x_bias)  # evaluate f(x + h)
+        x_bias[ix_result] -= 2 * height  # increment by h
+        fxmh = function(x_bias)  # evaluate f(x - h)
+        x_bias[ix_result] += height  # reset
 
-        grad_numerical = (fxph - fxmh) / (2 * h)
-        grad_analytic = analytic_grad[ix]
+        grad_numerical = (fxph - fxmh) / (2 * height)
+        grad_analytic = analytic_grad[ix_result]
         rel_error = abs(grad_numerical - grad_analytic) / (
-        abs(grad_numerical) + abs(grad_analytic))
-        print ('numerical: %f analytic: %f, relative error: %e' % (
-        grad_numerical, grad_analytic, rel_error))
+                abs(grad_numerical) + abs(grad_analytic))
+        print('numerical: %f analytic: %f, relative error: %e' % (
+            grad_numerical, grad_analytic, rel_error))
