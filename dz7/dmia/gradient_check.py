@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-#pylint_disable=wildcard-import
-#pylint_disable=consider-using-generator
+# pylint_disable=wildcard-import
+# pylint_disable=consider-using-generator
 """
 Gradient check module for learning app
 """
@@ -58,4 +58,4 @@ def grad_check_sparse(function, x_bias, analytic_grad, num_checks):
         rel_error = abs(grad_numerical - grad_analytic) / (
                 abs(grad_numerical) + abs(grad_analytic))
         print('numerical: %s analytic: %s, relative error: %s',
-            grad_numerical, grad_analytic, rel_error)
+              grad_numerical, grad_analytic, rel_error)
