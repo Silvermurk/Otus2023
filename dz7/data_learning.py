@@ -73,9 +73,8 @@ def test_data_learning():
                   reg=1e-3)
         train_scores.append(accuracy_score(y_train, clf.predict(x_train)))
         test_scores.append(accuracy_score(y_test, clf.predict(x_test)))
-    # 3000 will take too much pipeline time and fail 60 sec GitHub watchdog
     clf = linear_model.SGDClassifier(
-        max_iter=1000,
+        max_iter=100,
         random_state=42,
         loss="log",
         penalty="l2",
