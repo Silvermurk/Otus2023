@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 #pylint_disable=wildcard-import
+#pylint_disable=consider-using-generator
 """
 Gradient check module for learning app
 """
-import numpy as np
-from random import randrange
 
+from random import randrange
+import numpy as np
 from joblib.numpy_pickle_utils import xrange
 
 
@@ -56,5 +57,5 @@ def grad_check_sparse(function, x_bias, analytic_grad, num_checks):
         grad_analytic = analytic_grad[ix_result]
         rel_error = abs(grad_numerical - grad_analytic) / (
                 abs(grad_numerical) + abs(grad_analytic))
-        print('numerical: %f analytic: %f, relative error: %e' % (
-            grad_numerical, grad_analytic, rel_error))
+        print('numerical: %s analytic: %s, relative error: %s',
+            grad_numerical, grad_analytic, rel_error)
