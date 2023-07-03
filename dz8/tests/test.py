@@ -1,3 +1,5 @@
+# pylint:disable=no-member
+
 """
 Main test file for memcload
 """
