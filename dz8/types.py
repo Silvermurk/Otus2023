@@ -56,8 +56,8 @@ class AppsInstalled(NamedTuple):
         try:
             raw_dev_type = raw_dev_type.strip().upper()
             dev_type = DeviceType[raw_dev_type]
-        except KeyError as key_err:
-            raise KeyError from key_err
+        except KeyError:
+            raise KeyError("Unknown device type: {%s}", raw_dev_type)
 
         if not dev_id:
             raise ValueError("Device ID missed.")
