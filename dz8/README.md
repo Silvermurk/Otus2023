@@ -3,7 +3,7 @@ The intent of this program is to use Python's multiprocessing module for parsing
 log files (see `sample.tsv.gz`) and caching parsed lines to Memcached.
 
 ## **Requirements**
-* Python 3.8
+* Python 3.10
   - python-memcached
   - protobuf
 * Memcached

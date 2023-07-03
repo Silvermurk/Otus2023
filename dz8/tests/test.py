@@ -1,4 +1,5 @@
 # pylint:disable=no-member
+# pylint:disable=pointless-string-statement
 """
 Tests for memcload module
 """
