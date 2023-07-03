@@ -1,8 +1,3 @@
-# pylint: raising-format-tuple
-"""
-Types for protobuf and memcload
-"""
-
 import logging
 
 from enum import Enum
@@ -10,9 +5,6 @@ from typing import List, NamedTuple
 
 
 class DeviceType(Enum):
-    """
-    Types class by thread
-    """
     IDFA = 0
     GAID = 1
     ADID = 2
@@ -23,18 +15,12 @@ class DeviceType(Enum):
 
 
 class ProcessingStatus(Enum):
-    """
-    Results class
-    """
     OK = 1
     ERROR = -1
     SKIP = 0
 
 
 class AppsInstalled(NamedTuple):
-    """
-    Tuple types class
-    """
     dev_type: DeviceType
     dev_id: str
     lat: float
@@ -43,9 +29,6 @@ class AppsInstalled(NamedTuple):
 
     @classmethod
     def from_raw(cls, line: str) -> "AppsInstalled":
-        """
-        Load raw data
-        """
         line_parts = line.strip().split("\t")
 
         if len(line_parts) < 5:
@@ -57,7 +40,7 @@ class AppsInstalled(NamedTuple):
             raw_dev_type = raw_dev_type.strip().upper()
             dev_type = DeviceType[raw_dev_type]
         except KeyError:
-            raise KeyError("Unknown device type: {%s}", raw_dev_type)
+            raise ValueError(f"Unknown device type: {raw_dev_type}")
 
         if not dev_id:
             raise ValueError("Device ID missed.")
@@ -70,12 +53,12 @@ class AppsInstalled(NamedTuple):
                 for a in raw_apps.split(",")
                 if a.strip().isdigit()
             ]
-            logging.info("Not all user apps are digits: `%s`", line)
+            logging.info("Not all user apps are digits: `%s`" % line)
 
         try:
             lat, lon = float(raw_lat), float(raw_lon)
         except ValueError:
             lat = lon = float("nan")
-            logging.info("Invalid geo coords: `%s`",line)
+            logging.info("Invalid geo coords: `%s`" % line)
 
         return cls(dev_type, dev_id, lat, lon, apps)
