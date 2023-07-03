@@ -1,149 +1,58 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-import memcache
-import os
-import gzip
-import optparse
+import math
 import unittest
 
-import dz8.appsinstalled_pb2 as appsinstalled_pb2
-import dz8.memc_load as memc_load
-
-opts = {'dry': False,
-        'pattern': 'tests/data/tmp_uniq_keys.gz',
-        'dvid': '127.0.0.1:33016',
-        'adid': '127.0.0.1:33015',
-        'gaid': '127.0.0.1:33014',
-        'idfa': '127.0.0.1:33013'}
-
-test_mc_cfg = {"MEMCACHE_SOCKET_TIMEOUT": 1,
-               "MEMCACHE_RETRY": 0,
-               "MEMCACHE_RETRY_TIMEOUT": 0}
+from dz8 import appsinstalled_pb2
+from dz8.types import AppsInstalled, DeviceType
 
 
-class TestMemcacheOK(unittest.TestCase):
-    expected_errors = 0
-    expected_processed = 299882
+class TestMemcLoad(unittest.TestCase):
+    def test_proto(self):
+        sample = (
+            "idfa\t1rfw452y52g2gq4g\t55.55\t42.42\t1423,43,567,3,7,23\n"
+            "gaid\t7rfw452y52g2gq4g\t55.55\t42.42\t7423,424"
+        )
+        for line in sample.splitlines():
+            dev_type, dev_id, lat, lon, raw_apps = line.strip().split("\t")
+            apps = [int(a) for a in raw_apps.split(",") if a.isdigit()]
+            lat, lon = float(lat), float(lon)
+            ua = appsinstalled_pb2.UserApps()
+            ua.lat = lat
+            ua.lon = lon
+            ua.apps.extend(apps)
+            packed = ua.SerializeToString()
+            unpacked = appsinstalled_pb2.UserApps()
+            unpacked.ParseFromString(packed)
+            self.assertEqual(ua, unpacked)
 
-    def check_integrity(self, path):
-        with gzip.open(path, 'rt', encoding='utf-8') as fd:
-            for line in fd:
-                dev_type, dev_id, lat, lon, raw_apps = line.strip().split("\t")
-                apps = [int(a) for a in raw_apps.split(",") if a.isdigit()]
-                lat, lon = float(lat), float(lon)
-                ua = appsinstalled_pb2.UserApps()
-                ua.lat = lat
-                ua.lon = lon
-                ua.apps.extend(apps)
-                expected_result = ua.SerializeToString()
-                memc = self.device_memc[dev_type]
-                key = "%s:%s" % (dev_type, dev_id)
-                result = memc.get(key)
-                self.assertEqual(result, expected_result, key)
+    def test_apps_installed_parse_valid(self):
+        ap = AppsInstalled.from_raw("  idfa\t1\t0\t0\t1423,   ")
+        self.assertIs(ap.dev_type, DeviceType.IDFA)
+        self.assertEqual(ap.lat, 0)
+        self.assertEqual(ap.lon, 0)
+        self.assertEqual(len(ap.apps), 1)
 
-    def setUp(self):
-        os.system("killall memcached")
-        os.system("memcached -p 33013& \
-                   memcached -p 33014& \
-                   memcached -p 33015& \
-                   memcached -p 33016&")
-        self.device_memc = {
-            "idfa": memcache.Client(["127.0.0.1:33013"]),
-            "gaid": memcache.Client(["127.0.0.1:33014"]),
-            "adid": memcache.Client(["127.0.0.1:33015"]),
-            "dvid": memcache.Client(["127.0.0.1:33016"]),
-        }
+        ap = AppsInstalled.from_raw("     gaid\t1\t-100\t-1000\t-1,0,1   ")
+        self.assertIs(ap.dev_type, DeviceType.GAID)
+        self.assertEqual(ap.lat, -100)
+        self.assertEqual(ap.lon, -1000)
+        self.assertEqual(len(ap.apps), 3)
 
-    def tearDown(self):
-        os.system("killall memcached")
+        ap = AppsInstalled.from_raw("adid\t1\ta\tb\t      1,  2,  aaa, 42   ")
+        self.assertIs(ap.dev_type, DeviceType.ADID)
+        self.assertTrue(math.isnan(ap.lat))
+        self.assertTrue(math.isnan(ap.lon))
+        self.assertEqual(ap.apps, [1, 2, 42])
 
-    def test_ok_default_settings(self):
-        memc_load.CONVERT_FRAME_SIZE = 1024
-        memc_load.UPLOAD_FRAME_SIZE = 1024
-        memc_load.CONVERT_QUEUE_MAXSIZE = 32
-        memc_load.UPLOAD_QUEUE_MAXSIZE = 64
-        memc_load.UPLOADERS = 1
-        reader = memc_load.Reader(optparse.Values(opts), test_mc_cfg)
-        errors, processed = reader.file_process(opts['pattern'])
-        self.assertEqual(errors, self.expected_errors)
-        self.assertEqual(processed, self.expected_processed)
-        self.check_integrity(opts['pattern'])
+    def test_apps_installed_parse_invalid(self):
+        with self.assertRaises(ValueError):
+            AppsInstalled.from_raw("idfa\t1\t0\t0")
 
-        errors, processed = reader.file_process(opts['pattern'])
-        self.assertEqual(errors, self.expected_errors)
-        self.assertEqual(processed, self.expected_processed)
+        with self.assertRaises(ValueError):
+            AppsInstalled.from_raw("xxxx\t1\t0\t0\t1,2,3")
 
-        errors, processed = reader.file_process(opts['pattern'])
-        self.assertEqual(errors, self.expected_errors)
-        self.assertEqual(processed, self.expected_processed)
-
-    def test_ok_4_loaders(self):
-        memc_load.CONVERT_FRAME_SIZE = 1024
-        memc_load.UPLOAD_FRAME_SIZE = 1024
-        memc_load.CONVERT_QUEUE_MAXSIZE = 32
-        memc_load.UPLOAD_QUEUE_MAXSIZE = 64
-        memc_load.UPLOADERS = 4
-        reader = memc_load.Reader(optparse.Values(opts), test_mc_cfg)
-        errors, processed = reader.file_process(opts['pattern'])
-        self.assertEqual(errors, self.expected_errors, processed)
-        self.assertEqual(processed, self.expected_processed, errors)
-        self.check_integrity(opts['pattern'])
-
-    def test_ok_by_one(self):
-        memc_load.CONVERT_FRAME_SIZE = 1
-        memc_load.UPLOAD_FRAME_SIZE = 1
-        memc_load.CONVERT_QUEUE_MAXSIZE = 32
-        memc_load.UPLOAD_QUEUE_MAXSIZE = 64
-        memc_load.UPLOADERS = 1
-        reader = memc_load.Reader(optparse.Values(opts), test_mc_cfg)
-        errors, processed = reader.file_process(opts['pattern'])
-        self.assertEqual(errors, self.expected_errors, processed)
-        self.assertEqual(processed, self.expected_processed, errors)
-        self.check_integrity(opts['pattern'])
+        with self.assertRaises(ValueError):
+            AppsInstalled.from_raw("gaid\t\t0\t0\t1,2,3")
 
 
-class TestMemcacheNotOK(unittest.TestCase):
-    expected_errors = 75324
-    expected_processed = 224558
-
-    def setUp(self):
-        os.system("killall memcached")
-        os.system("memcached -p 33014& \
-                   memcached -p 33015& \
-                   memcached -p 33016&")
-
-    def tearDown(self):
-        os.system("killall memcached")
-
-    def test_errors_count_default_settings(self):
-        memc_load.CONVERT_FRAME_SIZE = 1024
-        memc_load.UPLOAD_FRAME_SIZE = 1024
-        memc_load.CONVERT_QUEUE_MAXSIZE = 32
-        memc_load.UPLOAD_QUEUE_MAXSIZE = 64
-        memc_load.UPLOADERS = 1
-        reader = memc_load.Reader(optparse.Values(opts), test_mc_cfg)
-        errors, processed = reader.file_process(opts['pattern'])
-        self.assertEqual(errors, self.expected_errors, processed)
-        self.assertEqual(processed, self.expected_processed, errors)
-
-    def test_errors_count_4_loaders(self):
-        memc_load.CONVERT_FRAME_SIZE = 1024
-        memc_load.UPLOAD_FRAME_SIZE = 1024
-        memc_load.CONVERT_QUEUE_MAXSIZE = 32
-        memc_load.UPLOAD_QUEUE_MAXSIZE = 64
-        memc_load.UPLOADERS = 4
-        reader = memc_load.Reader(optparse.Values(opts), test_mc_cfg)
-        errors, processed = reader.file_process(opts['pattern'])
-        self.assertEqual(errors, self.expected_errors, processed)
-        self.assertEqual(processed, self.expected_processed, errors)
-
-    def test_errors_count_by_one(self):
-        memc_load.CONVERT_FRAME_SIZE = 1
-        memc_load.UPLOAD_FRAME_SIZE = 1
-        memc_load.CONVERT_QUEUE_MAXSIZE = 32
-        memc_load.UPLOAD_QUEUE_MAXSIZE = 64
-        memc_load.UPLOADERS = 1
-        reader = memc_load.Reader(optparse.Values(opts), test_mc_cfg)
-        errors, processed = reader.file_process(opts['pattern'])
-        self.assertEqual(errors, self.expected_errors, processed)
-        self.assertEqual(processed, self.expected_processed, errors)
+if __name__ == "__main__":
+    unittest.main()

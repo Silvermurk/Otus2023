@@ -1,16 +1,37 @@
 # MemcLoad
-Задание: нужно переделать однопоточную версию memc_load.py в более производительный вариант. Сам скрипт
-парсит и заливает в мемкеш поминутную выгрузку логов трекера установленных приложений. Ключом является
-тип и идентификатор устройства через двоеточие, значением являет protobuf сообщение.
+The intent of this program is to use Python's multiprocessing module for parsing 
+log files (see `sample.tsv.gz`) and caching parsed lines to Memcached.
 
-## Testing
+## **Requirements**
+* Python 3.8
+  - python-memcached
+  - protobuf
+* Memcached
+
+## **Installation**
 ```
-python3 -m unittest discover -s tests
+git clone https://github.com/stkrizh/otus.git
+cd otus
+pip install -r memcload/requirements.txt
 ```
 
-## Usage
+## **Tests**
 ```
-memcached -p 33013& memcached -p 33014& memcached -p 33015& memcached -p 33016&
-python3 memc_load.py --pattern="tests/data/*.gz"
+python -m memcload.test
 ```
 
+## **Examples**
+To get help:
+```
+python -m memcload --help
+```
+
+Dry run:
+```
+python -m memcload --dry --pattern="./memcload/*.tsv.gz"
+```
+
+Make sure that Memcached is running:
+```
+python -m memcload --pattern="/path/to/logs/*.tsv.gz"
+```
