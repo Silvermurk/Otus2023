@@ -16,7 +16,7 @@ pip install -r requirements.txt
 
 ## **Tests**
 ```
-python -m memcload.test
+python -m dz8/tests/test.py
 ```
 
 ## **Examples**
