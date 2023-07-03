@@ -6,7 +6,8 @@ import gzip
 import optparse
 import unittest
 
-from dz8 import appsinstalled_pb2, memc_load
+import dz8.appsinstalled_pb2 as appsinstalled_pb2
+import dz8.memc_load as memc_load
 
 opts = {'dry': False,
         'pattern': 'tests/data/tmp_uniq_keys.gz',
