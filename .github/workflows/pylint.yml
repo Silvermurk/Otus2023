@@ -28,6 +28,10 @@ jobs:
         pip install tqdm
         pip install matplotlib
         pip install scikit-learn
+        pip install protobuf==3.10.0
+        pip install python-memcached==1.59
+        pip install six==1.12.0
+        pip install memcache
     - name: Analysing the code with pylint
       run: |
         pylint $(git ls-files '*.py')
