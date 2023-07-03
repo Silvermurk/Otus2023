@@ -1,4 +1,6 @@
 # pylint:disable=deprecated-module
+# pylint:disable=no-member
+# pylint:disable=broad-exception-caught
 """
 Main module for memcload
 """
@@ -62,7 +64,7 @@ def insert_appsinstalled(
                 (appsinstalled.dev_type.value, key), packed
                 )
         except Exception as exception:
-            logging.exception(f"Cannot write to Memcache: %s", exception)
+            logging.exception("Cannot write to Memcache: %s", exception)
             return False
         if success:
             return True
@@ -86,7 +88,7 @@ def process_line(
     try:
         appsinstalled = AppsInstalled.from_raw(line)
     except ValueError as exception:
-        logging.error(f"Cannot parse line: %s", exception)
+        logging.error("Cannot parse line: %s", exception)
         return ProcessingStatus.ERROR
 
     all_ok: bool = insert_appsinstalled(memcache_client, appsinstalled, dry)
@@ -103,7 +105,7 @@ def process_file(_function: str,
     Process single file by memcache
     """
     worker = mp.current_process()
-    logging.info(f"[%s] Processing %s", worker.name, _function)
+    logging.info("[%s] Processing %s", worker.name, _function)
 
     memcache_client = memcache.Client(
         memcache_addresses,
@@ -156,7 +158,7 @@ def main(options):
     with mp.Pool() as pool:
         for processed_file in pool.imap(job, files):
             worker = mp.current_process()
-            logging.info(f"[{worker.name}] Renaming {processed_file}")
+            logging.info("[%s] Renaming {%s}", worker.name, processed_file)
             dot_rename(processed_file)
 
 
@@ -186,10 +188,10 @@ if __name__ == "__main__":
         datefmt="%Y.%m.%d %H:%M:%S",
         )
 
-    logging.info("Memc loader started with options: %s" % opts)
+    logging.info("Memc loader started with options: %s", opts)
 
     try:
         main(opts)
-    except Exception as e:
-        logging.exception("Unexpected error: %s" % e)
+    except Exception as exception:
+        logging.exception("Unexpected error: %s", exception)
         sys.exit(1)
