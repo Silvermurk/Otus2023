@@ -1,3 +1,4 @@
+# pylint:disable=raise-missing-from
 """
 Types for tests anc memcload
 """
@@ -69,12 +70,12 @@ class AppsInstalled(NamedTuple):
                 for a in raw_apps.split(",")
                 if a.strip().isdigit()
             ]
-            logging.info("Not all user apps are digits: `%s`" % line)
+            logging.info("Not all user apps are digits: `%s`", line)
 
         try:
             lat, lon = float(raw_lat), float(raw_lon)
         except ValueError:
             lat = lon = float("nan")
-            logging.info("Invalid geo coords: `%s`" % line)
+            logging.info("Invalid geo coords: `%s`", line)
 
         return cls(dev_type, dev_id, lat, lon, apps)
