@@ -1,3 +1,6 @@
+"""
+Main test file for memcload
+"""
 import math
 import unittest
 
@@ -6,7 +9,13 @@ from dz8.types import AppsInstalled, DeviceType
 
 
 class TestMemcLoad(unittest.TestCase):
+    """
+    Main test class for memcload
+    """
     def test_proto(self):
+        """
+        Protobuf test
+        """
         sample = (
             "idfa\t1rfw452y52g2gq4g\t55.55\t42.42\t1423,43,567,3,7,23\n"
             "gaid\t7rfw452y52g2gq4g\t55.55\t42.42\t7423,424"
@@ -52,6 +61,9 @@ class TestMemcLoad(unittest.TestCase):
 
 
     def test_apps_installed_parse_invalid(self):
+        """
+        Invalid types memcload test
+        """
         with self.assertRaises(ValueError):
             AppsInstalled.from_raw("idfa\t1\t0\t0")
 
