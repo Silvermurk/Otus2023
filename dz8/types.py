@@ -1,3 +1,7 @@
+"""
+Types for tests anc memcload
+"""
+
 import logging
 
 from enum import Enum
@@ -5,6 +9,9 @@ from typing import List, NamedTuple
 
 
 class DeviceType(Enum):
+    """
+    Types by thread
+    """
     IDFA = 0
     GAID = 1
     ADID = 2
@@ -15,12 +22,18 @@ class DeviceType(Enum):
 
 
 class ProcessingStatus(Enum):
+    """
+    Types by result
+    """
     OK = 1
     ERROR = -1
     SKIP = 0
 
 
 class AppsInstalled(NamedTuple):
+    """
+    App installed tuples
+    """
     dev_type: DeviceType
     dev_id: str
     lat: float
@@ -29,6 +42,9 @@ class AppsInstalled(NamedTuple):
 
     @classmethod
     def from_raw(cls, line: str) -> "AppsInstalled":
+        """
+        Get data from raw string
+        """
         line_parts = line.strip().split("\t")
 
         if len(line_parts) < 5:
