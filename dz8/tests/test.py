@@ -1,8 +1,8 @@
 import math
 import unittest
 
-from . import appsinstalled_pb2
-from .types import AppsInstalled, DeviceType
+from dz8 import appsinstalled_pb2
+from dz8.types import AppsInstalled, DeviceType
 
 
 class TestMemcLoad(unittest.TestCase):
