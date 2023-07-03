@@ -20,7 +20,7 @@ python -m dz8/tests/test.py
 ```
 
 ## **Examples**
-Heplp command:
+Help command:
 ```
 python -m memcload --help
 ```
