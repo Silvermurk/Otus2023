@@ -1,3 +1,4 @@
+# pylint: raising-format-tuple
 """
 Types for protobuf and memcload
 """
