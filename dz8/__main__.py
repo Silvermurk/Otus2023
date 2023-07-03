@@ -1,4 +1,7 @@
 # pylint:disable=deprecated-module
+"""
+Main module for memcload
+"""
 import glob
 import gzip
 import logging
@@ -18,9 +21,6 @@ import memcache
 from . import appsinstalled_pb2
 from .types import AppsInstalled, ProcessingStatus
 
-"""
-Main module for memtest, environment variables set here
-"""
 NORMAL_ERR_RATE = 0.01
 MEMCACHE_RETRY_NUMBER = 3
 MEMCACHE_RETRY_TIMEOUT_SECONDS = 1
@@ -51,7 +51,7 @@ def insert_appsinstalled(
     packed = user_apps.SerializeToString()
 
     if dry_run:
-        logging.debug("%s -> %s", (key, str(user_apps).replace("\n", " ")))
+        logging.debug("%s -> %s", key, str(user_apps).replace("\n", " "))
         return True
 
     for _ in range(MEMCACHE_RETRY_NUMBER):
@@ -62,7 +62,7 @@ def insert_appsinstalled(
                 (appsinstalled.dev_type.value, key), packed
                 )
         except Exception as exception:
-            logging.exception(f"Cannot write to Memcache: {exception}")
+            logging.exception(f"Cannot write to Memcache: %s", exception)
             return False
         if success:
             return True
@@ -85,8 +85,8 @@ def process_line(
 
     try:
         appsinstalled = AppsInstalled.from_raw(line)
-    except ValueError as e:
-        logging.error(f"Cannot parse line: {e}")
+    except ValueError as exception:
+        logging.error(f"Cannot parse line: %s", exception)
         return ProcessingStatus.ERROR
 
     all_ok: bool = insert_appsinstalled(memcache_client, appsinstalled, dry)
@@ -96,40 +96,42 @@ def process_line(
     return ProcessingStatus.OK
 
 
-def process_file(fn: str, memcache_addresses: List[str], dry: bool) -> None:
+def process_file(_function: str,
+                 memcache_addresses: List[str],
+                 dry: bool) -> str:
     """
     Process single file by memcache
     """
     worker = mp.current_process()
-    logging.info(f"[{worker.name}] Processing {fn}")
+    logging.info(f"[%s] Processing %s", worker.name, _function)
 
     memcache_client = memcache.Client(
         memcache_addresses,
         socket_timeout=3,
         dead_retry=MEMCACHE_RETRY_TIMEOUT_SECONDS,
         )
-    with gzip.open(fn) as fd:
+    with gzip.open(_function) as filedir:
         job = partial(process_line, memcache_client=memcache_client, dry=dry)
-        statuses = Counter(map(job, fd))
+        statuses = Counter(map(job, filedir))
 
-    ok = statuses[ProcessingStatus.OK]
+    all_ok = statuses[ProcessingStatus.OK]
     errors = statuses[ProcessingStatus.ERROR]
-    processed = ok + errors
+    processed = all_ok + errors
 
     err_rate = float(errors) / processed if processed else 1.0
 
     if err_rate < NORMAL_ERR_RATE:
         logging.info(
-            f"[{worker.name}] [{fn}] Acceptable error rate: {err_rate}."
-            f" Successfull load"
+            "%s [%s] Acceptable error rate: %s.\n"
+            "Successfull load", worker.name, _function, err_rate
             )
     else:
         logging.error(
-            f"[{worker.name}] [{fn}] High error rate: "
-            f"{err_rate} > {NORMAL_ERR_RATE}. Failed load"
+            "[%s] [%s] High error rate: "
+            "{%s} > {%s}. Failed load",
+            worker.name, _function, err_rate, NORMAL_ERR_RATE
             )
-
-    return fn
+    return _function
 
 
 def main(options):
