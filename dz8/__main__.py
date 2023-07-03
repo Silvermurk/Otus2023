@@ -1,6 +1,9 @@
 # pylint:disable=deprecated-module
 # pylint:disable=no-member
 # pylint:disable=broad-exception-caught
+# pylint:disable=redefined-outer-name
+# pylint:disable=pointless-string-statement
+
 """
 Main module for memcload
 """
