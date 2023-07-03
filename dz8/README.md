@@ -10,9 +10,7 @@ log files (see `sample.tsv.gz`) and caching parsed lines to Memcached.
 
 ## **Installation**
 ```
-git clone https://github.com/stkrizh/otus.git
-cd otus
-pip install -r memcload/requirements.txt
+pip install -r requirements.txt
 ```
 
 ## **Tests**
