@@ -4,9 +4,10 @@ log files (see `sample.tsv.gz`) and caching parsed lines to Memcached.
 
 ## **Requirements**
 * Python 3.10
-  - python-memcached
-  - protobuf
-* Memcached
+* protobuf==3.10.0
+* python-memcached==1.59
+* six==1.12.0
+* memcache==0.12.0
 
 ## **Installation**
 ```
@@ -19,7 +20,7 @@ python -m memcload.test
 ```
 
 ## **Examples**
-To get help:
+Heplp command:
 ```
 python -m memcload --help
 ```
@@ -29,7 +30,7 @@ Dry run:
 python -m memcload --dry --pattern="./memcload/*.tsv.gz"
 ```
 
-Make sure that Memcached is running:
+Test if Memcached is running:
 ```
 python -m memcload --pattern="/path/to/logs/*.tsv.gz"
 ```
