@@ -15,7 +15,7 @@ import os
 import sys
 import time
 
-from collections import Counter
+from collections import Counter, deque
 from functools import partial
 from optparse import OptionParser
 from pathlib import Path
@@ -70,8 +70,7 @@ def insert_appsinstalled(
         except Exception as exception:
             logging.exception("Cannot write to Memcache: %s", exception)
             return False
-        else:
-            return True
+        return True
     time.sleep(MEMCACHE_RETRY_TIMEOUT_SECONDS)
 
     logging.error("Cannot write to Memcache. Server is down")
@@ -160,7 +159,15 @@ def main(options):
         )
 
     with mp.Pool() as pool:
-        for processed_file in pool.imap(job, files):
+        results = deque(pool.imap_unordered(job, files))
+
+        while results:
+            try:
+                processed_file = results.popleft()
+            except IndexError:
+                time.sleep(0.1)
+                continue
+
             worker = mp.current_process()
             logging.info("[%s] Renaming {%s}", worker.name, processed_file)
             dot_rename(processed_file)
