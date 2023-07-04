@@ -51,7 +51,7 @@ def insert_appsinstalled(
     user_apps = appsinstalled_pb2.UserApps()
     user_apps.lat = appsinstalled.lat
     user_apps.lon = appsinstalled.lon
-    key = "%s:%s", (appsinstalled.dev_type, appsinstalled.dev_id)
+    key = (appsinstalled.dev_type.value, appsinstalled.dev_id)
     user_apps.apps.extend(appsinstalled.apps)
     packed = user_apps.SerializeToString()
 
@@ -63,15 +63,16 @@ def insert_appsinstalled(
         try:
             # Use a tuple as key to write to specific Memcached server
             # https://github.com/linsomniac/python-memcached/blob/bad41222379102e3f18f6f2f7be3ee608de6fbff/memcache.py#L698
-            success: bool = memcache_client.set(
-                (appsinstalled.dev_type.value, key), packed
+            memcache_client.set_multi(
+                {key: packed},
+                socket_timeout=MEMCACHE_SOCKET_TIMEOUT_SECONDS,
                 )
         except Exception as exception:
             logging.exception("Cannot write to Memcache: %s", exception)
             return False
-        if success:
+        else:
             return True
-        time.sleep(MEMCACHE_RETRY_TIMEOUT_SECONDS)
+    time.sleep(MEMCACHE_RETRY_TIMEOUT_SECONDS)
 
     logging.error("Cannot write to Memcache. Server is down")
     return False
