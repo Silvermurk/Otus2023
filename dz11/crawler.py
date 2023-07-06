@@ -65,7 +65,6 @@ async def crawl(fetcher: Fetcher, num_posts: int):
         fetcher.session = session
         await crawl_top_posts(session, fetcher, num_posts)
 
-    # Signal that the crawler has finished
     await fetcher.write_to_file(os.path.join(fetcher.store_dir, SENTINEL), b"")
 
 
