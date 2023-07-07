@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# pylint:disable=broad-exception-caught
 """
 Provides fetching url, saving url content to file, counting of ready links
 """
@@ -20,7 +21,8 @@ class Fetcher:
 
     def __init__(self, store_dir: str):
         """
-        Initializes a Fetcher object with a store directory path, and sets up a client session and a lock.
+        Initializes a Fetcher object with a store directory path,
+        and sets up a client session and a lock.
         """
         self.__posts_saved = 0
         self.__comments_links_saved = 0
@@ -35,7 +37,7 @@ class Fetcher:
         await self.lock.acquire()
         return self
 
-    async def __aexit__(self, exc_type, exc, tb):
+    async def __aexit__(self, exc_type, exc, tbx):
         """
         Releases the lock for the Fetcher object.
         """
@@ -79,7 +81,8 @@ class Fetcher:
 
     async def load_and_save(self, url: str, post_id: int, link_id: int):
         """
-        Fetches the content of a given URL, saves it to a file in the store directory, and increments the count of
+        Fetches the content of a given URL, saves it to a file in the
+        store directory, and increments the count of
         posts or comments links saved.
         """
         try:
@@ -92,49 +95,53 @@ class Fetcher:
             else:
                 await self.inc_posts_saved()
 
-            log.debug("Fetched and saved link %s for post %s: %s", link_id, post_id, url)
+            log.debug("Fetched and saved link %s for post %s: %s",
+                      link_id, post_id, url)
         except aiohttp.ClientError as error:
-            log.exception("Failed to load and save %s due to %s", url, error)
+            log.exception("Failed to load and save %s due to %s",
+                          url, error)
 
     async def fetch(self,
                     url: str,
                     need_bytes: bool = True,
                     retry: int = 0) -> (bytes, str):
         """
-        Fetches the content of a given URL using aiohttp and returns it as bytes or text.
+        Fetches the content of a given URL using aiohttp
+        and returns it as bytes or text.
         """
         try:
             async with async_timeout.timeout(10):
                 async with self.session.get(url) as response:
                     if need_bytes:
                         return await response.read()
-                    else:
-                        return await response.text()
+                    return await response.text()
         except (aiohttp.ClientError, asyncio.TimeoutError):
             if retry < MAX_RETRIES:
-                log.debug("Failed to fetch %s, retry %s in %s seconds", url, retry + 1, SEC_BETWEEN_RETRIES)
+                log.debug("Failed to fetch %s, retry %s in %s seconds",
+                          url, retry + 1, SEC_BETWEEN_RETRIES)
                 await asyncio.sleep(SEC_BETWEEN_RETRIES)
                 return await self.fetch(url, need_bytes, retry + 1)
-            else:
-                log.debug("Failed to fetch %s", url)
+            log.debug("Failed to fetch %s", url)
 
-    async def write_to_file(self, path: str, content: bytes):
+    @staticmethod
+    async def write_to_file(path: str, content: bytes):
         """
         Writes the content of a given URL to a file with error handling.
         """
         try:
-            async with aiofiles.open(path, mode="wb") as f:
-                await f.write(content)
+            async with aiofiles.open(path, mode="wb") as file:
+                await file.write(content)
         except Exception as exception:
-            log.exception("Failed to write to file %s due to %s", path, exception)
+            log.exception("Failed to write to file %s due to %s",
+                          path, exception)
 
     def get_path(self, link_id: int, post_id: int) -> str:
         """
         Returns the file path for a given comments link ID and post ID.
         """
         if link_id > 0:
-            filename = "{}_{}.html".format(post_id, link_id)
+            filename = f"{post_id}_{link_id}.html"
         else:
-            filename = "{}.html".format(post_id)
+            filename = f"{post_id}.html"
 
         return os.path.join(self.store_dir, filename)
