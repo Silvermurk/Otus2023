@@ -1,3 +1,7 @@
+# pylint:disable=invalid-name
+"""
+Async web crawler for fetching top posts from news.ycombinator.com
+"""
 # -*- coding: utf-8 -*-
 import os
 import logging as log
@@ -83,7 +87,7 @@ class Crawler:
                 links = soup.select("a[href*=item?id=]")
                 return [link["href"] for link in links]
         except aiohttp.ClientError:
-            log.debug("Failed to fetch post {}".format(post_id))
+            log.debug("Failed to fetch post %s",     post_id)
             return []
 
 

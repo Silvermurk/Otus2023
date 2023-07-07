@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+"""
+Provides fetching url, saving url content to file, counting of ready links
+"""
 import os
 import logging as log
 import aiohttp
