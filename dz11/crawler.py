@@ -68,7 +68,7 @@ class Crawler:
             soup = BeautifulSoup(content, "html.parser")
             links = soup.select("a.storylink")
 
-            for i, link in enumerate(links[:num_posts]):
+            for _, link in enumerate(links[:num_posts]):
                 post_id = int(urlparse(link["href"]).query.split("=")[1])
                 await self.fetcher.load_and_save(link["href"], post_id, 0)
                 await self.crawl_post_links(session, post_id)
