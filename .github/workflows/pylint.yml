@@ -32,7 +32,7 @@ jobs:
         pip install python-memcached==1.59
         pip install six==1.12.0
         pip install memcache
-        pip install aiohtp
+        pip install aiohttp
         pip install beautifulsoup4
     - name: Analysing the code with pylint
       run: |
