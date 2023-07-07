@@ -33,6 +33,7 @@ jobs:
         pip install six==1.12.0
         pip install memcache
         pip install aiohttp
+        pip install aiofiles
         pip install beautifulsoup4
     - name: Analysing the code with pylint
       run: |
