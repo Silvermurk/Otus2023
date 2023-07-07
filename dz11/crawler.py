@@ -36,23 +36,30 @@ class Crawler:
         setup_logging(self.logfile)
         async with aiohttp.ClientSession() as session:
             self.fetcher.session = session
-            await self.crawl_top_posts(session, self.fetcher, self.num_posts)
+            await self.crawl_top_posts(session, self.num_posts)
 
-        await self.fetcher.write_to_file(os.path.join(self.store_dir, SENTINEL), b"")
+        await self.fetcher.write_to_file(os.path.join(
+            self.store_dir, SENTINEL), b"")
 
-    async def crawl_post_links(self, session: aiohttp.ClientSession, post_id: int):
+    async def crawl_post_links(self,
+                               session: aiohttp.ClientSession,
+                               post_id: int):
         """
         Fetch the links to the comments of a post and save them to files
         """
         links = await self.fetch_post_links(session, post_id)
         for i, link in enumerate(links):
-            await self.fetcher.load_and_save(YNEWS_MAIN_URL + link, post_id, i + 1)
+            await self.fetcher.load_and_save(
+                YNEWS_MAIN_URL + link, post_id, i + 1)
 
-    async def crawl_top_posts(self, session: aiohttp.ClientSession, fetcher: Fetcher, num_posts: int):
+    async def crawl_top_posts(self,
+                              session: aiohttp.ClientSession,
+                              num_posts: int):
         """
         Fetch the top N posts and the links to their comments and save them to files
         """
-        async with session.get(YNEWS_MAIN_URL, timeout=FETCH_TIMEOUT) as response:
+        async with session.get(YNEWS_MAIN_URL,
+                               timeout=FETCH_TIMEOUT) as response:
             content = await response.text()
             soup = BeautifulSoup(content, "html.parser")
             links = soup.select("a.storylink")
@@ -62,7 +69,9 @@ class Crawler:
                 await self.fetcher.load_and_save(link["href"], post_id, 0)
                 await self.crawl_post_links(session, post_id)
 
-    async def fetch_post_links(self, session: aiohttp.ClientSession, post_id: int) -> list[str]:
+    async def fetch_post_links(self,
+                               session: aiohttp.ClientSession,
+                               post_id: int) -> list[str]:
         """
         Fetch the HTML content of a post and return the links to its comments
         """
@@ -86,7 +95,8 @@ def setup_logging(logfile: str):
         level=log.DEBUG,
         format="%(asctime)s %(levelname)s: %(message)s",
         handlers=[
-            RotatingFileHandler(logfile, maxBytes=10 * 1024 * 1024, backupCount=5),
+            RotatingFileHandler(logfile,
+                                maxBytes=10 * 1024 * 1024, backupCount=5),
             log.StreamHandler()
             ]
         )

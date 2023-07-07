@@ -1,3 +1,6 @@
+"""
+Config file for crawler
+"""
 # -*- coding: utf-8 -*-
 YNEWS_MAIN_URL = "https://news.ycombinator.com/"
 YNEWS_POST_URL_TEMPLATE = "https://news.ycombinator.com/item?id={id}"
