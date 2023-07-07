@@ -21,9 +21,6 @@ async def main(store_dir: str, num_posts: int, logfile: str):
 
 
 if __name__ == "__main__":
-    """
-    Entry point
-    """
     parser = argparse.ArgumentParser(description="Async crawler for news.ycombinator.com")
     parser.add_argument("store_dir", type=str, help="directory to store the fetched content")
     parser.add_argument("num_posts", type=int, help="number of top posts to fetch")
