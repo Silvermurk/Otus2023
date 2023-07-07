@@ -3,12 +3,12 @@
 """
 Provides fetching url, saving url content to file, counting of ready links
 """
-import os
-import logging as log
-import aiohttp
-import aiofiles
 import asyncio
+import logging as log
+import os
 
+import aiofiles
+import aiohttp
 import async_timeout
 
 from dz11.config import SEC_BETWEEN_RETRIES, MAX_RETRIES

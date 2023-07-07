@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# pylint:disable=broad-exception-caught
 """
 This module implements an async web crawler for fetching top posts from news.ycombinator.com.
 """
