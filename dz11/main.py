@@ -6,19 +6,17 @@ This module implements an async web crawler for fetching top posts from news.yco
 import argparse
 import asyncio
 
-from dz11.crawler import setup_logging, crawl
-from dz11.fetcher import Fetcher
+from dz11.crawler import Crawler
 
 
 async def main(store_dir: str, num_posts: int, logfile: str):
     """
     Start the crawler and wait for it to finish
     """
-    setup_logging(logfile)
-    fetcher = Fetcher(store_dir)
-    if args.num_posts <= 0:
+    crawler = Crawler(store_dir, num_posts, logfile)
+    if num_posts <= 0:
         raise ValueError("num_posts must be a positive integer")
-    await crawl(fetcher, num_posts)
+    await crawler.start()
 
 
 if __name__ == "__main__":
@@ -34,7 +32,4 @@ if __name__ == "__main__":
     try:
         asyncio.run(main(args.store_dir, args.num_posts, args.logfile))
     except Exception as exception:
-        print(f"An error occurred: {exception}")
-    finally:
-        fetcher = Fetcher(args.store_dir)
-        asyncio.run(fetcher.close())
+        print(f"Error: {exception}")

@@ -1,117 +1,102 @@
 # -*- coding: utf-8 -*-
 import os
 import logging as log
+from logging.handlers import RotatingFileHandler
+from urllib.parse import urlparse
+
 import aiohttp
-import aiofiles
-import asyncio
 
-import async_timeout
+from bs4 import BeautifulSoup
 
-from dz11.config import SEC_BETWEEN_RETRIES, MAX_RETRIES
+from dz11.config import YNEWS_POST_URL_TEMPLATE, YNEWS_MAIN_URL, FETCH_TIMEOUT, SENTINEL
+from dz11.fetcher import Fetcher
 
 
-class Fetcher:
+class Crawler:
     """
-    Provides fetching url, saving url content to file, counting of ready links
+    Async web crawler for fetching top posts from news.ycombinator.com
     """
 
-    def __init__(self, store_dir: str):
-        self.__posts_saved = 0
-        self.__comments_links_saved = 0
+    def __init__(self, store_dir: str, num_posts: int, logfile: str):
         self.store_dir = store_dir
-        self.lock = asyncio.Lock()
-        self.session = aiohttp.ClientSession()
+        self.num_posts = num_posts
+        self.logfile = logfile
+        self.fetcher = Fetcher(store_dir)
 
     async def __aenter__(self):
-        await self.lock.acquire()
         return self
 
     async def __aexit__(self, exc_type, exc, tb):
-        self.lock.release()
+        await self.fetcher.close()
 
-    async def close(self):
+    async def start(self):
         """
-        Clean up the client session when we're done using it
+        Start the crawler and wait for it to finish
         """
-        await self.session.close()
+        setup_logging(self.logfile)
+        async with aiohttp.ClientSession() as session:
+            self.fetcher.session = session
+            try:
+                await self.crawl_top_posts(session, self.fetcher, self.num_posts)
+            except Exception as e:
+                log.error(f"An error occurred while crawling: {e}")
 
-    @property
-    async def posts_saved(self):
-        async with self:
-            return self.__posts_saved
+        await self.fetcher.write_to_file(os.path.join(self.store_dir, SENTINEL), b"")
 
-    async def inc_posts_saved(self):
-        async with self:
-            self.__posts_saved += 1
-
-    @property
-    async def comments_links_saved(self):
-        async with self:
-            return self.__comments_links_saved
-
-    async def inc_comments_links_saved(self):
-        async with self:
-            self.__comments_links_saved += 1
-
-    async def load_and_save(self, url: str, post_id: int, link_id: int):
+    async def crawl_post_links(self, session: aiohttp.ClientSession, post_id: int):
         """
-        Fetch url and save content to file
+        Fetch the links to the comments of a post and save them to files
         """
+        links = await self.fetch_post_links(session, post_id)
+        for i, link in enumerate(links):
+            try:
+                await self.fetcher.load_and_save(YNEWS_MAIN_URL + link, post_id, i + 1)
+            except Exception as e:
+                log.error(f"An error occurred while fetching post {post_id} link {i + 1}: {e}")
+
+    async def crawl_top_posts(self, session: aiohttp.ClientSession, fetcher: Fetcher, num_posts: int):
+        """
+        Fetch the top N posts and the links to their comments and save them to files
+        """
+        async with session.get(YNEWS_MAIN_URL, timeout=FETCH_TIMEOUT) as response:
+            content = await response.text()
+            soup = BeautifulSoup(content, "html.parser")
+            links = soup.select("a.storylink")
+
+            for i, link in enumerate(links[:num_posts]):
+                post_id = int(urlparse(link["href"]).query.split("=")[1])
+                try:
+                    await self.fetcher.load_and_save(link["href"], post_id, 0)
+                    await self.crawl_post_links(session, post_id)
+                except Exception as e:
+                    log.error(f"An error occurred while fetching post {post_id}: {e}")
+
+    @staticmethod
+    async def fetch_post_links(session: aiohttp.ClientSession, post_id: int) -> list[str]:
+        """
+        Fetch the HTML content of a post and return the links to its comments
+        """
+        url = YNEWS_POST_URL_TEMPLATE.format(id=post_id)
         try:
-            content = await self.fetch(url, need_bytes=True)
-            filepath = self.get_path(link_id, post_id)
-            await self.write_to_file(filepath, content)
+            async with session.get(url, timeout=FETCH_TIMEOUT) as response:
+                content = await response.text()
+                soup = BeautifulSoup(content, "html.parser")
+                links = soup.select("a[href*=item?id=]")
+                return [link["href"] for link in links]
+        except aiohttp.ClientError as e:
+            log.debug(f"Failed to fetch post {post_id}: {e}")
+            return []
 
-            if link_id > 0:
-                await self.inc_comments_links_saved()
-            else:
-                await self.inc_posts_saved()
 
-            log.debug("Fetched and saved link {} for post {}: {}".format(
-                link_id, post_id, url
-            ))
-        except aiohttp.ClientError:
-            pass
-
-    async def fetch(self,
-                    url: str,
-                    need_bytes: bool = True,
-                    retry: int = 0) -> (bytes, str):
-        """
-        Fetch an URL using aiohttp returning parsed JSON response.
-        As suggested by the aiohttp docs we reuse the session.
-        """
-        try:
-            async with async_timeout.timeout(10):
-                async with self.session.get(url) as response:
-                    if need_bytes:
-                        return await response.read()
-                    else:
-                        return await response.text()
-        except (aiohttp.ClientError, asyncio.TimeoutError):
-            if retry < MAX_RETRIES:
-                log.debug("Failed to fetch {}, retry {} in {} seconds".format(
-                    url, retry + 1, SEC_BETWEEN_RETRIES
-                ))
-                await asyncio.sleep(SEC_BETWEEN_RETRIES)
-                return await self.fetch(url, need_bytes, retry + 1)
-            else:
-                log.debug("Failed to fetch {}".format(url))
-
-    async def write_to_file(self, path: str, content: bytes):
-        """
-        Write content to file with error handling
-        """
-        async with aiofiles.open(path, mode="wb") as f:
-            await f.write(content)
-
-    def get_path(self, link_id: int, post_id: int) -> str:
-        """
-        Get file path for a given link_id and post_id
-        """
-        if link_id > 0:
-            filename = "{}_{}.html".format(post_id, link_id)
-        else:
-            filename = "{}.html".format(post_id)
-
-        return os.path.join(self.store_dir, filename)
+def setup_logging(logfile: str):
+    """
+    Configure the logger to write to a file and stdout
+    """
+    log.basicConfig(
+        level=log.DEBUG,
+        format="%(asctime)s %(levelname)s: %(message)s",
+        handlers=[
+            RotatingFileHandler(logfile, maxBytes=10 * 1024 * 1024, backupCount=5),
+            log.StreamHandler()
+            ]
+        )
